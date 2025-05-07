@@ -17,6 +17,6 @@ public class App {
     public static void premain(String args, Instrumentation inst){
         System.out.println("[dome agent] start to premain");
         AgentBuilder agentBuilder = new AgentBuilder.Default();
-        
+        agentBuilder.installOn(inst);
     }
 }
