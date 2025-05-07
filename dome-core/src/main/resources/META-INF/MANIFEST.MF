@@ -1,0 +1,3 @@
+Manifest-Version: 1.0
+Created-By: Dome Agent Framework
+Main-Class: com.lifelover.dome.core.App
