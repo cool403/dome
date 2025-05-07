@@ -3,7 +3,7 @@ package com.lifelover.dome.core.plugins.http;
 import com.lifelover.dome.core.helpers.ClassNames;
 import com.lifelover.dome.core.helpers.MethodNames;
 import com.lifelover.dome.core.plugins.BbPlugin;
-import com.lifelover.dome.core.plugins.BpTransformer;
+import com.lifelover.dome.core.plugins.BbTransformer;
 
 import net.bytebuddy.agent.builder.AgentBuilder;
 import net.bytebuddy.agent.builder.AgentBuilder.Transformer;
@@ -13,12 +13,12 @@ import net.bytebuddy.dynamic.DynamicType.Builder;
 import net.bytebuddy.matcher.ElementMatchers;
 import net.bytebuddy.utility.JavaModule;
 
-public class DispatcherServletBpPlugin implements BbPlugin {
+public class DispatcherServletBbPlugin implements BbPlugin {
 
     @Override
     public void apply(AgentBuilder agentBuilder) {
         agentBuilder.type(ElementMatchers.named(ClassNames.DISPATCHER_SERVLET_CLASS_NAME))
-                .transform(new BpTransformer() {
+                .transform(new BbTransformer() {
                     @Override
                     protected Builder<?> build(Builder<?> builder, TypeDescription typeDescription,
                             ClassLoader classLoader,
@@ -32,7 +32,7 @@ public class DispatcherServletBpPlugin implements BbPlugin {
 
     @Override
     public String getBpPluginName() {
-        return "DSBP";
+        return "DSBB";
     }
 
 }
