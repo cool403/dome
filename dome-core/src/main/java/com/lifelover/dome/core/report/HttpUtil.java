@@ -37,7 +37,7 @@ public class HttpUtil {
      * @throws IOException 如果发生I/O错误
      */
     public static String get(String url) throws IOException {
-        return get(url, null, DEFAULT_CONNECT_TIMEOUT, DEFAULT_READ_TIMEOUT);
+        return get(url, null, DEFAULT_TIMEOUT);
     }
 
     /**
@@ -49,7 +49,7 @@ public class HttpUtil {
      * @throws IOException 如果发生I/O错误
      */
     public static String get(String url, Map<String, String> params) throws IOException {
-        return get(url, params, DEFAULT_CONNECT_TIMEOUT, DEFAULT_READ_TIMEOUT);
+        return get(url, params, DEFAULT_TIMEOUT);
     }
 
     /**
@@ -62,13 +62,12 @@ public class HttpUtil {
      * @return 响应内容
      * @throws IOException 如果发生I/O错误
      */
-    public static String get(String url, Map<String, String> params,
-            int connectTimeout, int readTimeout) throws IOException {
+    public static String get(String url, Map<String, String> params,int timeout) throws IOException {
         // 构建带参数的URL
         String fullUrl = buildUrlWithParams(url, params);
         HttpURLConnection connection = null;
         try {
-            connection = createConnection(fullUrl, "GET", connectTimeout, readTimeout);
+            connection = createConnection(fullUrl, "GET", timeout,timeout);
             return readResponse(connection);
         } finally {
             if (connection != null) {
