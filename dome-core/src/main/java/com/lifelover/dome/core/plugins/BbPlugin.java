@@ -9,7 +9,7 @@ public interface BbPlugin {
      * 
      * @param agentBuilder
      */
-    void apply(AgentBuilder agentBuilder);
+    AgentBuilder apply(AgentBuilder agentBuilder);
 
 
     /**

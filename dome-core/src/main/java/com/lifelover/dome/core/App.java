@@ -28,6 +28,10 @@ public class App {
             return;
         }
         AgentBuilder agentBuilder = new AgentBuilder.Default();
+        //装载插件
+        for (BbPlugin plugin : plugins) {
+            agentBuilder = plugin.apply(agentBuilder);
+        }
         agentBuilder.installOn(inst);
     }
 }

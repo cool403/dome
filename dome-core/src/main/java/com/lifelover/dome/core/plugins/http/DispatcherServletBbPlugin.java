@@ -16,8 +16,8 @@ import net.bytebuddy.utility.JavaModule;
 public class DispatcherServletBbPlugin implements BbPlugin {
 
     @Override
-    public void apply(AgentBuilder agentBuilder) {
-        agentBuilder.type(ElementMatchers.named(ClassNames.DISPATCHER_SERVLET_CLASS_NAME))
+    public AgentBuilder apply(AgentBuilder agentBuilder) {
+        return agentBuilder.type(ElementMatchers.named(ClassNames.DISPATCHER_SERVLET_CLASS_NAME))
                 .transform(new BbTransformer() {
                     @Override
                     protected Builder<?> build(Builder<?> builder, TypeDescription typeDescription,
