@@ -144,9 +144,9 @@ public class DispatcherServletDelegation {
      * @return
      * @throws Exception
      */
-    private static String getRequestBody(Object request, String httpMethod) throws Exception {
+    public static String getRequestBody(Object request, String httpMethod) throws Exception {
         //post才有输入
-        if (httpMethod != "POST") {
+        if (!"POST".equals(httpMethod)){
             return "";
         }
         String requestBody = null;
@@ -171,7 +171,7 @@ public class DispatcherServletDelegation {
      * @return
      * @throws Exception
      */
-    private static String getResponseBody(Object response) throws Exception {
+    public static String getResponseBody(Object response) throws Exception {
         // Check if response is not null and is an instance of HttpServletResponse
         byte[] content = (byte[]) ReflectMethods
                 .getMethod(response.getClass(), MethodNames.GET_CONTENT_AS_BYTE_ARRAY_METHOD)
