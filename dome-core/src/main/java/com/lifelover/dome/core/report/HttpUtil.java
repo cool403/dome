@@ -62,12 +62,12 @@ public class HttpUtil {
      * @return 响应内容
      * @throws IOException 如果发生I/O错误
      */
-    public static String get(String url, Map<String, String> params,int timeout) throws IOException {
+    public static String get(String url, Map<String, String> params, int timeout) throws IOException {
         // 构建带参数的URL
         String fullUrl = buildUrlWithParams(url, params);
         HttpURLConnection connection = null;
         try {
-            connection = createConnection(fullUrl, "GET", timeout,timeout);
+            connection = createConnection(fullUrl, "GET", timeout, timeout);
             return readResponse(connection);
         } finally {
             if (connection != null) {
@@ -98,7 +98,7 @@ public class HttpUtil {
      * @return 响应内容
      * @throws IOException 如果发生I/O错误
      */
-    public static String post(String url, String body,int timeout) throws IOException {
+    public static String post(String url, String body, int timeout) throws IOException {
         HttpURLConnection connection = null;
         OutputStream out = null;
         try {
