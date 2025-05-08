@@ -69,7 +69,9 @@ public class DispatcherServletDelegation {
                         final String requestUri = (String) ReflectMethods
                                         .getMethod(request.getClass(), MethodNames.GET_REQUEST_URI_METHOD)
                                         .invoke(request);
-                        String contentType = (String)ReflectMethods.getMethod(request.getClass(), MethodNames.GET_CONTENT_TYPE_METHOD).invoke(request);
+                        String contentType = (String) ReflectMethods
+                                        .getMethod(request.getClass(), MethodNames.GET_CONTENT_TYPE_METHOD)
+                                        .invoke(request);
                         // 可支持忽略哪些路径不采集,默认/error
                         if (agentConfig.getIgnoreUrls().stream().anyMatch(it -> requestUri.contains(it))) {
                                 return;
@@ -87,7 +89,7 @@ public class DispatcherServletDelegation {
                                 System.out.println("request uri: " + requestUri + ", http status:" + httpStatus);
                                 return;
                         }
-                        //上传请求200 情况 下不做特殊处理
+                        // 上传请求200 情况 下不做特殊处理
                         if (contentType.startsWith("multipart/")) {
                                 return;
                         }
