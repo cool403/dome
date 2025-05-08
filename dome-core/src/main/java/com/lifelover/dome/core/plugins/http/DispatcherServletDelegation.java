@@ -69,14 +69,14 @@ public class DispatcherServletDelegation {
                         final String requestUri = (String) ReflectMethods
                                         .getMethod(request.getClass(), MethodNames.GET_REQUEST_URI_METHOD)
                                         .invoke(request);
-                        String contentType = (String)ReflectMethods.getMethod(request.getClass(), MethodNames.GET_CONTENT_TYPE_METHOD).invoke(requestUri);
+                        String contentType = (String)ReflectMethods.getMethod(request.getClass(), MethodNames.GET_CONTENT_TYPE_METHOD).invoke(request);
                         // 可支持忽略哪些路径不采集,默认/error
                         if (agentConfig.getIgnoreUrls().stream().anyMatch(it -> requestUri.contains(it))) {
                                 return;
                         }
                         // 忽略特定的方法
                         String httpMethod = (String) ReflectMethods
-                                        .getMethod(request.getClass(), MethodNames.GET_METHOD).invoke(requestUri);
+                                        .getMethod(request.getClass(), MethodNames.GET_METHOD).invoke(request);
                         if (!agentConfig.getSupportMethods().contains(httpMethod)) {
                                 return;
                         }
@@ -108,9 +108,6 @@ public class DispatcherServletDelegation {
                                         .getMethod(response.getClass(), MethodNames.GET_CONTENT_AS_BYTE_ARRAY_METHOD)
                                         .invoke(response);
                         responseBodyStr = new String(content);
-                        // Copy the response body to the response
-                        ReflectMethods.getMethod(response.getClass(), MethodNames.COPY_BODY_TO_RESPONSE_METHOD)
-                                        .invoke(response);
                         System.out.println(
                                         "request uri: " + requestUri + ",request body:" + requestBody
                                                         + ",response data: "
