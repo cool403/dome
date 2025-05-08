@@ -8,15 +8,15 @@ import java.util.concurrent.TimeUnit;
 import com.lifelover.dome.core.config.ConfigLoader;
 
 
-public class LocalQueueAsyncEventReporter implements EventReporter {
+public abstract class AbstractEventReporter implements EventReporter {
 
     private static final int THREAD_POOL_SIZE = 5;
     private static final int QUEUE_CAPACITY = 250;
-    private static final int REQUEST_TIMEOUT_MS = 150;
+    
 
     private final ExecutorService executorService;
 
-    public LocalQueueAsyncEventReporter() {
+    public AbstractEventReporter() {
         this.executorService = new ThreadPoolExecutor(
             THREAD_POOL_SIZE, 
             THREAD_POOL_SIZE, 
@@ -27,19 +27,19 @@ public class LocalQueueAsyncEventReporter implements EventReporter {
     }
 
     @Override
-    public void report(List<MetricsEvent> lst) {
+    public void asyncReport(List<MetricsEvent> lst) {
         if (lst == null || lst.isEmpty()) {
             return;
         }
-        String reportUrl = ConfigLoader.getAgentConfig().getCollectorAddr();
-        if (reportUrl == null || reportUrl.isBlank()) {
-            System.out.println("收集器地址为空");
-            return;
-        }
+        // String reportUrl = ConfigLoader.getAgentConfig().getCollectorAddr();
+        // if (reportUrl == null || reportUrl.isBlank()) {
+        //     System.out.println("收集器地址为空");
+        //     return;
+        // }
         for (MetricsEvent event : lst) {
             executorService.submit(() -> {
                 try {
-                    HttpUtil.post(reportUrl, event.jsonStr(), REQUEST_TIMEOUT_MS);
+                    handle(event);
                 } catch (Exception e) {
                     // 可以添加日志记录错误
                     System.err.println("事件上报失败: " + e.getMessage());
@@ -47,6 +47,12 @@ public class LocalQueueAsyncEventReporter implements EventReporter {
             });
         }
     }
+
+    /**
+     * 
+     * @param metricsEvent
+     */
+    protected abstract void handle(MetricsEvent metricsEvent);
 
     // 添加关闭线程池的方法，在应用程序关闭时调用
     public void shutdown() {

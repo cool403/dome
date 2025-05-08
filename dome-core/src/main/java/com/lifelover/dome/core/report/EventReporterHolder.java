@@ -8,7 +8,7 @@ public class EventReporterHolder {
      * 
      */
     private static class __EventReporterHolder{
-        private static final EventReporter INSTANCE = new LocalQueueAsyncEventReporter();
+        private static final EventReporter INSTANCE = new HttpEventReporter();
     }
 
     /**

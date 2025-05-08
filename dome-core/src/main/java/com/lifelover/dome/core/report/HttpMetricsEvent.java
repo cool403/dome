@@ -2,6 +2,7 @@ package com.lifelover.dome.core.report;
 
 public class HttpMetricsEvent implements MetricsEvent{
     private String traceId;
+    private Long reqTime;
     private String httpMethod;
     private String httpStatus;
     private String httpUrl;
@@ -43,11 +44,19 @@ public class HttpMetricsEvent implements MetricsEvent{
     public void setHttpMethod(String httpMethod) {
         this.httpMethod = httpMethod;
     }
+    
+    public Long getReqTime() {
+        return reqTime;
+    }
+    public void setReqTime(Long reqTime) {
+        this.reqTime = reqTime;
+    }
     @Override
     public String jsonStr() {
         StringBuilder json = new StringBuilder("{");
         String eventId = getEventId();
         json.append("\"eventId\":\"").append(eventId).append("\",");
+        json.append("\"reqTime\":\"").append(reqTime+"").append("\",");
         json.append("\"httpMethod\":\"").append(httpMethod == null ? "" : httpMethod).append("\",");
         json.append("\"httpStatus\":\"").append(httpStatus == null ? "" : httpStatus).append("\",");
         json.append("\"httpUrl\":\"").append(httpUrl == null ? "" : httpUrl).append("\",");

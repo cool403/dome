@@ -8,5 +8,5 @@ public interface EventReporter {
      * 上报采集到的事件
      * @param lst
      */
-    void report(List<MetricsEvent> lst);
+    void asyncReport(List<MetricsEvent> lst);
 }
