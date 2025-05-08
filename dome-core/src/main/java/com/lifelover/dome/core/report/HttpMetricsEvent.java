@@ -37,6 +37,7 @@ public class HttpMetricsEvent implements MetricsEvent{
         this.responseBody = responseBody;
     }
 
+    @Override
     public String jsonStr() {
         StringBuilder json = new StringBuilder("{");
         String eventId = getEventId();

@@ -7,4 +7,10 @@ public interface MetricsEvent {
     default String getEventId(){
         return UUID.randomUUID().toString();
     }
+
+    /**
+     * to json
+     * @return
+     */
+    String jsonStr();
 }
