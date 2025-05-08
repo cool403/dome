@@ -20,5 +20,6 @@ public class MethodNames {
 
 
     public static final String GET_CONTENT_TYPE_METHOD = "getContentType";
+    // public static final String IS_MULTIPART_METHOD = "isMultipart";
     
 }
