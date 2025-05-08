@@ -9,4 +9,11 @@ public interface EventReporter {
      * @param lst
      */
     void asyncReport(List<MetricsEvent> lst);
+
+
+    /**
+     * 
+     * @param metricsEvent
+     */
+    void asyncReport(MetricsEvent metricsEvent);
 }

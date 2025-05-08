@@ -6,6 +6,7 @@ public class HttpMetricsEvent implements MetricsEvent{
     private String httpMethod;
     private String httpStatus;
     private String httpUrl;
+    private String queryParams;
     private String requestBody;
     private String responseBody;
     public String getTraceId() {
@@ -48,9 +49,17 @@ public class HttpMetricsEvent implements MetricsEvent{
     public Long getReqTime() {
         return reqTime;
     }
+    public String getQueryParams() {
+        return queryParams;
+    }
+    public void setQueryParams(String queryParams) {
+        this.queryParams = queryParams;
+    }
     public void setReqTime(Long reqTime) {
         this.reqTime = reqTime;
     }
+
+    
     @Override
     public String jsonStr() {
         StringBuilder json = new StringBuilder("{");

@@ -1,5 +1,6 @@
 package com.lifelover.dome.core.report;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ExecutorService;
@@ -25,6 +26,17 @@ public abstract class AbstractEventReporter implements EventReporter {
             new ArrayBlockingQueue<>(QUEUE_CAPACITY)
         );
     }
+
+    
+
+    @Override
+    public void asyncReport(MetricsEvent metricsEvent) {
+        List<MetricsEvent> lst = new ArrayList<>(1);
+        lst.add(metricsEvent);
+        asyncReport(lst);
+    }
+
+
 
     @Override
     public void asyncReport(List<MetricsEvent> lst) {

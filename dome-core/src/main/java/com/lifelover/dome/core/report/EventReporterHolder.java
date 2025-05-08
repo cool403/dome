@@ -8,7 +8,8 @@ public class EventReporterHolder {
      * 
      */
     private static class __EventReporterHolder{
-        private static final EventReporter INSTANCE = new HttpEventReporter();
+        // private static final EventReporter INSTANCE = new HttpEventReporter();
+        private static final EventReporter INSTANCE = new ConsoleEventReporter();
     }
 
     /**

@@ -4,7 +4,11 @@ import net.bytebuddy.asm.Advice;
 import net.bytebuddy.implementation.bytecode.assign.Assigner;
 
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 import com.lifelover.dome.core.config.AgentConfig;
 import com.lifelover.dome.core.config.ConfigLoader;
@@ -13,6 +17,9 @@ import com.lifelover.dome.core.helpers.MethodNames;
 import com.lifelover.dome.core.helpers.ReflectMethods;
 import com.lifelover.dome.core.helpers.StreamUtils;
 import com.lifelover.dome.core.helpers.TargetAppClassRegistry;
+import com.lifelover.dome.core.report.EventReporterHolder;
+import com.lifelover.dome.core.report.HttpMetricsEvent;
+import com.lifelover.dome.core.report.MetricsEvent;
 
 public class DispatcherServletDelegation {
 
@@ -64,6 +71,8 @@ public class DispatcherServletDelegation {
                 AgentConfig agentConfig = ConfigLoader.getAgentConfig();
                 String requestBody = null;
                 String responseBodyStr = null;
+                //先这样写，后续根据不同应用的赋值方式区
+                String traceId = UUID.randomUUID().toString();
                 try {
                         // 获取请求路径
                         final String requestUri = (String) ReflectMethods
@@ -91,34 +100,34 @@ public class DispatcherServletDelegation {
                                         .getMethod(response.getClass(), MethodNames.GET_STATUS_METHOD)
                                         .invoke(response);
                         if (httpStatus >= 400) {
-                                System.out.println("request uri: " + requestUri + ", http status:" + httpStatus);
+                                // System.out.println("request uri: " + requestUri + ", http status:" + httpStatus);
+                                //状态码不对的也需要记录输入内容
+                                requestBody = getRequestBody(request, httpMethod);
+                                HttpMetricsEvent metricsEvent = new HttpMetricsEvent();
+                                metricsEvent.setHttpStatus(httpStatus+"");
+                                metricsEvent.setHttpMethod(httpMethod);
+                                metricsEvent.setHttpUrl(requestUri);
+                                metricsEvent.setReqTime(System.currentTimeMillis());
+                                metricsEvent.setRequestBody(requestBody);
+                                metricsEvent.setTraceId(traceId);
+                                EventReporterHolder.getEventReporter().asyncReport(metricsEvent);
                                 return;
                         }
                         // 上传请求200 情况 下不做特殊处理
                         if (contentType.startsWith("multipart/")) {
                                 return;
                         }
-                        // Check if request is not null and is an instance of HttpServletRequest
-                        byte[] content1 = (byte[]) ReflectMethods
-                                        .getMethod(request.getClass(), MethodNames.GET_CONTENT_AS_BYTE_ARRAY_METHOD)
-                                        .invoke(request);
-                        requestBody = new String(content1);
-                        // 这里考虑到有可能后面方法并没有读取inputStream,导致无法争取取道输入，这里再手工读取下
-                        if (requestBody.isEmpty()) {
-                                InputStream is = (InputStream) ReflectMethods
-                                                .getMethod(request.getClass(), MethodNames.GET_IS_METHOD)
-                                                .invoke(request);
-                                requestBody = StreamUtils.copyToString(is, StandardCharsets.UTF_8);
-                        }
-                        // Check if response is not null and is an instance of HttpServletResponse
-                        byte[] content = (byte[]) ReflectMethods
-                                        .getMethod(response.getClass(), MethodNames.GET_CONTENT_AS_BYTE_ARRAY_METHOD)
-                                        .invoke(response);
-                        responseBodyStr = new String(content);
-                        System.out.println(
-                                        "request uri: " + requestUri + ",request body:" + requestBody
-                                                        + ",response data: "
-                                                        + responseBodyStr);
+                        responseBodyStr = getResponseBody(response);
+                        requestBody = getRequestBody(request, httpMethod);
+                        HttpMetricsEvent metricsEvent = new HttpMetricsEvent();
+                        metricsEvent.setHttpStatus(httpStatus+"");
+                        metricsEvent.setHttpMethod(httpMethod);
+                        metricsEvent.setHttpUrl(requestUri);
+                        metricsEvent.setReqTime(System.currentTimeMillis());
+                        metricsEvent.setRequestBody(requestBody);
+                        metricsEvent.setResponseBody(responseBodyStr);
+                        metricsEvent.setTraceId(traceId);
+                        EventReporterHolder.getEventReporter().asyncReport(metricsEvent);
                 } catch (Exception e) {
                         System.out.println("intercept on doDispatch error." + e.getMessage());
                 } finally {
@@ -126,5 +135,48 @@ public class DispatcherServletDelegation {
                         ReflectMethods.getMethod(response.getClass(), MethodNames.COPY_BODY_TO_RESPONSE_METHOD)
                                         .invoke(response);
                 }
+        }
+
+
+        /**
+         * 
+         * @param request
+         * @param httpMethod
+         * @return
+         * @throws Exception
+         */
+        private static String getRequestBody(Object request, String httpMethod) throws Exception{
+                //post才有输入
+                if (httpMethod != "POST") {
+                        return "";
+                }
+                String requestBody =  null;
+                // Check if request is not null and is an instance of HttpServletRequest
+                byte[] content1 = (byte[]) ReflectMethods
+                                .getMethod(request.getClass(), MethodNames.GET_CONTENT_AS_BYTE_ARRAY_METHOD)
+                                .invoke(request);
+                requestBody = new String(content1);
+                // 这里考虑到有可能后面方法并没有读取inputStream,导致无法争取取道输入，这里再手工读取下
+                if (requestBody.isEmpty()) {
+                        InputStream is = (InputStream) ReflectMethods
+                                        .getMethod(request.getClass(), MethodNames.GET_IS_METHOD)
+                                        .invoke(request);
+                        requestBody = StreamUtils.copyToString(is, StandardCharsets.UTF_8);
+                }
+        }
+
+        /**
+         * 
+         * @param response
+         * @return
+         * @throws Exception
+         */
+        private static String getResponseBody(Object response) throws Exception{
+                // Check if response is not null and is an instance of HttpServletResponse
+                byte[] content = (byte[]) ReflectMethods
+                .getMethod(response.getClass(), MethodNames.GET_CONTENT_AS_BYTE_ARRAY_METHOD)
+                .invoke(response);
+                return new String(content);
+
         }
 }
