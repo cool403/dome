@@ -16,10 +16,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * 支持GET/POST请求，默认JSON格式
  */
 public class HttpUtil {
-    // 默认连接超时时间（毫秒）
-    private static final int DEFAULT_CONNECT_TIMEOUT = 5000;
     // 默认读取超时时间（毫秒）
-    private static final int DEFAULT_READ_TIMEOUT = 10000;
+    private static final int DEFAULT_TIMEOUT = 150;
     // 默认内容类型
     private static final String DEFAULT_CONTENT_TYPE = "application/json; charset=utf-8";
     // 请求头缓存
@@ -88,7 +86,7 @@ public class HttpUtil {
      * @throws IOException 如果发生I/O错误
      */
     public static String post(String url, String body) throws IOException {
-        return post(url, body, DEFAULT_CONNECT_TIMEOUT, DEFAULT_READ_TIMEOUT);
+        return post(url, body, DEFAULT_TIMEOUT);
     }
 
     /**
@@ -101,12 +99,11 @@ public class HttpUtil {
      * @return 响应内容
      * @throws IOException 如果发生I/O错误
      */
-    public static String post(String url, String body,
-            int connectTimeout, int readTimeout) throws IOException {
+    public static String post(String url, String body,int timeout) throws IOException {
         HttpURLConnection connection = null;
         OutputStream out = null;
         try {
-            connection = createConnection(url, "POST", connectTimeout, readTimeout);
+            connection = createConnection(url, "POST", timeout, timeout);
             connection.setDoOutput(true);
             connection.setRequestProperty("Content-Type", DEFAULT_CONTENT_TYPE);
             // 写入请求体
