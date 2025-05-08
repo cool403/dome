@@ -80,13 +80,11 @@ public class DispatcherServletDelegation {
                                         break;
                                 }
                         }
-                        if (shouldIgnore) {
-                                return;
-                        }
                         // 忽略特定的方法
                         String httpMethod = (String) ReflectMethods
                                         .getMethod(request.getClass(), MethodNames.GET_METHOD).invoke(request);
-                        if (!agentConfig.getSupportMethods().contains(httpMethod)) {
+                        shouldIgnore = shouldIgnore || !agentConfig.getSupportMethods().contains(httpMethod);
+                        if (shouldIgnore) {
                                 return;
                         }
                         final int httpStatus = (int) ReflectMethods
