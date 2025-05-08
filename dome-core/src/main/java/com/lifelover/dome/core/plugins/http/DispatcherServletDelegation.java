@@ -73,7 +73,14 @@ public class DispatcherServletDelegation {
                                         .getMethod(request.getClass(), MethodNames.GET_CONTENT_TYPE_METHOD)
                                         .invoke(request);
                         // 可支持忽略哪些路径不采集,默认/error
-                        if (agentConfig.getIgnoreUrls().stream().anyMatch(it -> requestUri.contains(it))) {
+                        boolean shouldIgnore = false;
+                        for (String ignoreUrl : agentConfig.getIgnoreUrls()) {
+                                if (requestUri.contains(ignoreUrl)) {
+                                        shouldIgnore = true;
+                                        break;
+                                }
+                        }
+                        if (shouldIgnore) {
                                 return;
                         }
                         // 忽略特定的方法
