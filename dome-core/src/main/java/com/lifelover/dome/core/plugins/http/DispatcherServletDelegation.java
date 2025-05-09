@@ -71,7 +71,7 @@ public class DispatcherServletDelegation {
         AgentConfig agentConfig = ConfigLoader.getAgentConfig();
         String requestBody = null;
         String responseBodyStr = null;
-        //先这样写，后续根据不同应用的赋值方式区
+        // 先这样写，后续根据不同应用的赋值方式区
         String traceId = UUID.randomUUID().toString();
         try {
             // 获取请求路径
@@ -100,11 +100,12 @@ public class DispatcherServletDelegation {
                     .getMethod(response.getClass(), MethodNames.GET_STATUS_METHOD)
                     .invoke(response);
             if (httpStatus >= 400) {
-                // System.out.println("request uri: " + requestUri + ", http status:" + httpStatus);
-                //状态码不对的也需要记录输入内容
+                // System.out.println("request uri: " + requestUri + ", http status:" +
+                // httpStatus);
+                // 状态码不对的也需要记录输入内容
                 requestBody = getRequestBody(request, httpMethod);
                 HttpMetricsEvent metricsEvent = new HttpMetricsEvent();
-                metricsEvent.setHttpStatus(httpStatus+"");
+                metricsEvent.setHttpStatus(httpStatus + "");
                 metricsEvent.setHttpMethod(httpMethod);
                 metricsEvent.setHttpUrl(requestUri);
                 metricsEvent.setReqTime(System.currentTimeMillis());
@@ -121,7 +122,7 @@ public class DispatcherServletDelegation {
             responseBodyStr = getResponseBody(response);
             requestBody = getRequestBody(request, httpMethod);
             HttpMetricsEvent metricsEvent = new HttpMetricsEvent();
-            metricsEvent.setHttpStatus(httpStatus+"");
+            metricsEvent.setHttpStatus(httpStatus + "");
             metricsEvent.setHttpMethod(httpMethod);
             metricsEvent.setHttpUrl(requestUri);
             metricsEvent.setReqTime(System.currentTimeMillis());
@@ -146,8 +147,8 @@ public class DispatcherServletDelegation {
      * @throws Exception
      */
     public static String getRequestBody(Object request, String httpMethod) throws Exception {
-        //post才有输入
-        if (!"POST".equals(httpMethod)){
+        // post才有输入
+        if (!"POST".equals(httpMethod)) {
             return "";
         }
         String requestBody = null;
@@ -155,7 +156,7 @@ public class DispatcherServletDelegation {
         byte[] content1 = (byte[]) ReflectMethods
                 .getMethod(request.getClass(), MethodNames.GET_CONTENT_AS_BYTE_ARRAY_METHOD)
                 .invoke(request);
-        if (content1 == null || content1.length ==0) {
+        if (content1 == null || content1.length == 0) {
             return null;
         }
         requestBody = new String(content1);
