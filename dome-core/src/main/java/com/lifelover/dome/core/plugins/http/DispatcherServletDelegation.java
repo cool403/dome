@@ -114,7 +114,8 @@ public class DispatcherServletDelegation {
                 return;
             }
             // 上传请求200 情况 下不做特殊处理
-            if (contentType.startsWith("multipart/")) {
+            // 部分情况下contentType可能为空
+            if (contentType != null && contentType.startsWith("multipart/")) {
                 return;
             }
             responseBodyStr = getResponseBody(response);
@@ -154,6 +155,9 @@ public class DispatcherServletDelegation {
         byte[] content1 = (byte[]) ReflectMethods
                 .getMethod(request.getClass(), MethodNames.GET_CONTENT_AS_BYTE_ARRAY_METHOD)
                 .invoke(request);
+        if (content1 == null || content1.length ==0) {
+            return null;
+        }
         requestBody = new String(content1);
         // 这里考虑到有可能后面方法并没有读取inputStream,导致无法争取取道输入，这里再手工读取下
         if (requestBody.isEmpty()) {
@@ -176,6 +180,9 @@ public class DispatcherServletDelegation {
         byte[] content = (byte[]) ReflectMethods
                 .getMethod(response.getClass(), MethodNames.GET_CONTENT_AS_BYTE_ARRAY_METHOD)
                 .invoke(response);
+        if (content == null || content.length == 0) {
+            return null;
+        }
         return new String(content);
     }
 }
