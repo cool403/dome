@@ -7,14 +7,14 @@ public interface BbPlugin {
     
     /**
      * 
-     * @param agentBuilder
+     * @param agentBuilder 代理构建器
      */
     AgentBuilder apply(AgentBuilder agentBuilder);
 
 
     /**
      * 
-     * @return
+     * @return 插件名称
      */
     String getBpPluginName();
 }

@@ -9,14 +9,14 @@ import com.lifelover.dome.core.plugins.PluginLoader;
 import net.bytebuddy.agent.builder.AgentBuilder;
 
 /**
- * Main entry point for the Dome Core application.
+ * Dome Core应用程序的主入口点。
  */
 public class App {
 
     /**
      * 
-     * @param args
-     * @param inst
+     * @param args 代理参数
+     * @param inst 插桩工具
      */
     public static void premain(String args, Instrumentation inst){
         System.out.println("[dome agent] start to premain");

@@ -1,4 +1,4 @@
 /**
- * SDK module for the Dome project.
+ * Dome项目的SDK模块。
  */
 package com.lifelover.dome.sdk;
