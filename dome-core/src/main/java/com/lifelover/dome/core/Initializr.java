@@ -1,9 +1,6 @@
 package com.lifelover.dome.core;
 
-import java.util.List;
-
 import com.lifelover.dome.core.config.ConfigLoader;
-import com.lifelover.dome.core.plugins.BbPlugin;
 import com.lifelover.dome.core.plugins.PluginLoader;
 
 public class Initializr {
