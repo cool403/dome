@@ -21,7 +21,7 @@ public class ConfigLoader {
             //从环境变量中获取collector地址,不是启动参数
             agentConfig  = new AgentConfig();
             String collectorAddr = System.getenv(EnvNames.ENV_COLLECTOR_ADDR);
-            agentConfig.setCollectorAddr(collectorAddr);
+            agentConfig.setCollectorUrl(collectorAddr);
         }
     }
 

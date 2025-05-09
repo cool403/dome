@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AgentConfig {
-    private String collectorAddr;
+    private String collectorUrl;
 
     private List<String> ignoreUrls = new ArrayList<>();
 
@@ -20,12 +20,12 @@ public class AgentConfig {
         supportMethods.add("DELETE");
     }
 
-    public String getCollectorAddr() {
-        return collectorAddr;
+    public String getCollectorUrl() {
+        return collectorUrl;
     }
 
-    public void setCollectorAddr(String collectorAddr) {
-        this.collectorAddr = collectorAddr;
+    public void setCollectorUrl(String collectorAddr) {
+        this.collectorUrl = collectorAddr;
     }
 
     public List<String> getIgnoreUrls() {

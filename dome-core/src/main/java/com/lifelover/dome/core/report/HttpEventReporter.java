@@ -12,7 +12,7 @@ public class HttpEventReporter extends AbstractEventReporter{
 
     @Override
     protected void handle(MetricsEvent metricsEvent) {
-        String reportUrl = ConfigLoader.getAgentConfig().getCollectorAddr();
+        String reportUrl = ConfigLoader.getAgentConfig().getCollectorUrl();
         if (reportUrl == null || reportUrl.isBlank()) {
             System.out.println("收集器地址为空");
             return;
