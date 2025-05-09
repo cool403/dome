@@ -8,8 +8,8 @@ public class EventReporterHolder {
      * 事件报告器持有者
      */
     private static class __EventReporterHolder{
-        // private static final EventReporter INSTANCE = new HttpEventReporter();
-        private static final EventReporter INSTANCE = new ConsoleEventReporter();
+        private static final EventReporter INSTANCE = new HttpEventReporter();
+        // private static final EventReporter INSTANCE = new ConsoleEventReporter();
     }
 
     /**

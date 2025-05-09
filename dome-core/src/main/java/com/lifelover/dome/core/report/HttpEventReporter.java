@@ -12,8 +12,9 @@ public class HttpEventReporter extends AbstractEventReporter{
 
     @Override
     protected void handle(MetricsEvent metricsEvent) {
-        String reportUrl = ConfigLoader.getAgentConfig().getCollectorUrl();
-        if (reportUrl == null || reportUrl.isBlank()) {
+        // String reportUrl = ConfigLoader.getAgentConfig().getCollectorUrl();
+        String reportUrl = "http://127.0.0.1:5000/items";
+        if (reportUrl == null || reportUrl == "") {
             System.out.println("收集器地址为空");
             return;
         }
@@ -25,5 +26,10 @@ public class HttpEventReporter extends AbstractEventReporter{
         }
     }
 
-    
+
+//    public static void main(String[] args) throws Exception{
+//        String reportUrl = "http://127.0.0.1:5000/items";
+//        HttpUtil.post(reportUrl, "{\"name\":\"陈小儿\",\"age\":34}", REQUEST_TIMEOUT_MS);
+//    }
+
 }
