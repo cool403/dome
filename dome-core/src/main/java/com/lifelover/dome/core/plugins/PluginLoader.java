@@ -3,6 +3,7 @@ package com.lifelover.dome.core.plugins;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.lifelover.dome.core.plugins.feign.FeignPlugin;
 import com.lifelover.dome.core.plugins.http.DispatcherServletBbPlugin;
 
 public class PluginLoader {
@@ -22,6 +23,8 @@ public class PluginLoader {
         if (pluginLst == null) {
             pluginLst = new ArrayList<>();
             BbPlugin dsbb = new DispatcherServletBbPlugin();
+            BbPlugin feignPlugin = new FeignPlugin();
+            pluginLst.add(feignPlugin);
             pluginLst.add(dsbb);
         }
     }
