@@ -6,7 +6,6 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-import com.lifelover.dome.core.config.ConfigLoader;
 
 
 public abstract class AbstractEventReporter implements EventReporter {

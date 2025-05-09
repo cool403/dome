@@ -1,13 +1,7 @@
 package com.lifelover.dome.core.plugins.http;
 
-import net.bytebuddy.asm.Advice;
-import net.bytebuddy.implementation.bytecode.assign.Assigner;
-
 import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 import com.lifelover.dome.core.config.AgentConfig;
@@ -19,7 +13,9 @@ import com.lifelover.dome.core.helpers.StreamUtils;
 import com.lifelover.dome.core.helpers.TargetAppClassRegistry;
 import com.lifelover.dome.core.report.EventReporterHolder;
 import com.lifelover.dome.core.report.HttpMetricsEvent;
-import com.lifelover.dome.core.report.MetricsEvent;
+
+import net.bytebuddy.asm.Advice;
+import net.bytebuddy.implementation.bytecode.assign.Assigner;
 
 public class DispatcherServletDelegation {
 
