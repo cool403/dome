@@ -12,8 +12,6 @@ public abstract class StreamUtils {
 
 	private static final byte[] EMPTY_CONTENT = new byte[0];
 
-
-
 	public static byte[] copyToByteArray(InputStream in) throws IOException {
 		if (in == null) {
 			return new byte[0];
@@ -23,7 +21,6 @@ public abstract class StreamUtils {
 		copy(in, out);
 		return out.toByteArray();
 	}
-
 
 	public static String copyToString(InputStream in, Charset charset) throws IOException {
 		if (in == null) {
@@ -40,31 +37,26 @@ public abstract class StreamUtils {
 		return out.toString();
 	}
 
-
 	public static String copyToString(ByteArrayOutputStream baos, Charset charset) {
 		try {
 			// Can be replaced with toString(Charset) call in Java 10+
 			return baos.toString(charset.name());
-		}
-		catch (UnsupportedEncodingException ex) {
+		} catch (UnsupportedEncodingException ex) {
 			// Should never happen
 			throw new IllegalArgumentException("Invalid charset name: " + charset, ex);
 		}
 	}
-
 
 	public static void copy(byte[] in, OutputStream out) throws IOException {
 		out.write(in);
 		out.flush();
 	}
 
-
 	public static void copy(String in, Charset charset, OutputStream out) throws IOException {
 		Writer writer = new OutputStreamWriter(out, charset);
 		writer.write(in);
 		writer.flush();
 	}
-
 
 	public static int copy(InputStream in, OutputStream out) throws IOException {
 		int byteCount = 0;
@@ -78,7 +70,6 @@ public abstract class StreamUtils {
 		return byteCount;
 	}
 
-
 	public static long copyRange(InputStream in, OutputStream out, long start, long end) throws IOException {
 		long skipped = in.skip(start);
 		if (skipped < start) {
@@ -91,19 +82,16 @@ public abstract class StreamUtils {
 			int bytesRead = in.read(buffer);
 			if (bytesRead == -1) {
 				break;
-			}
-			else if (bytesRead <= bytesToCopy) {
+			} else if (bytesRead <= bytesToCopy) {
 				out.write(buffer, 0, bytesRead);
 				bytesToCopy -= bytesRead;
-			}
-			else {
+			} else {
 				out.write(buffer, 0, (int) bytesToCopy);
 				bytesToCopy = 0;
 			}
 		}
 		return (end - start + 1 - bytesToCopy);
 	}
-
 
 	public static int drain(InputStream in) throws IOException {
 		byte[] buffer = new byte[BUFFER_SIZE];
@@ -115,21 +103,17 @@ public abstract class StreamUtils {
 		return byteCount;
 	}
 
-
 	public static InputStream emptyInput() {
 		return new ByteArrayInputStream(EMPTY_CONTENT);
 	}
-
 
 	public static InputStream nonClosing(InputStream in) {
 		return new NonClosingInputStream(in);
 	}
 
-
 	public static OutputStream nonClosing(OutputStream out) {
 		return new NonClosingOutputStream(out);
 	}
-
 
 	private static class NonClosingInputStream extends FilterInputStream {
 
@@ -141,7 +125,6 @@ public abstract class StreamUtils {
 		public void close() throws IOException {
 		}
 	}
-
 
 	private static class NonClosingOutputStream extends FilterOutputStream {
 

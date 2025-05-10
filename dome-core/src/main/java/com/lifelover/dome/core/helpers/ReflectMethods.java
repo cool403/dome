@@ -7,7 +7,12 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ReflectMethods {
     private static final Map<String, Method> methodCache = new ConcurrentHashMap<>();
 
-
+    /**
+     * 
+     * @param clazz
+     * @param methodName
+     * @return
+     */
     public static Method getMethod(Class<?> clazz, String methodName) {
         if (clazz == null) {
             return null;

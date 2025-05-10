@@ -9,7 +9,11 @@ public class TargetAppClassRegistry {
 
     private static final Map<String, Class<?>> targetAppClassMap = new ConcurrentHashMap<>();
 
-
+    /**
+     * 
+     * @param className
+     * @return
+     */
     public static Class<?> getClass(String className) {
         if (targetAppClassMap.containsKey(className)) {
             return targetAppClassMap.get(className);
