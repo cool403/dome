@@ -10,20 +10,20 @@ import java.util.concurrent.TimeUnit;
 
 public abstract class AbstractEventReporter implements EventReporter {
 
-    private static final int THREAD_POOL_SIZE = 5;
-    private static final int QUEUE_CAPACITY = 250;
+    // private static final int THREAD_POOL_SIZE = 5;
+    // private static final int QUEUE_CAPACITY = 250;
     
 
-    private final ExecutorService executorService;
+    // private final ExecutorService executorService;
 
     public AbstractEventReporter() {
-        this.executorService = new ThreadPoolExecutor(
-            THREAD_POOL_SIZE, 
-            THREAD_POOL_SIZE, 
-            0L, 
-            TimeUnit.MILLISECONDS,
-            new ArrayBlockingQueue<>(QUEUE_CAPACITY)
-        );
+        // this.executorService = new ThreadPoolExecutor(
+        //     THREAD_POOL_SIZE, 
+        //     THREAD_POOL_SIZE, 
+        //     0L, 
+        //     TimeUnit.MILLISECONDS,
+        //     new ArrayBlockingQueue<>(QUEUE_CAPACITY)
+        // );
     }
 
     
@@ -48,7 +48,7 @@ public abstract class AbstractEventReporter implements EventReporter {
         //     return;
         // }
         for (MetricsEvent event : lst) {
-            executorService.submit(() -> {
+            ThreadPoolSingleton.REPROTER_POOL.getThreadPool().submit(() -> {
                 try {
                     handle(event);
                 } catch (Exception e) {
@@ -65,15 +65,4 @@ public abstract class AbstractEventReporter implements EventReporter {
      */
     protected abstract void handle(MetricsEvent metricsEvent);
 
-    // 添加关闭线程池的方法，在应用程序关闭时调用
-    public void shutdown() {
-        executorService.shutdown();
-        try {
-            if (!executorService.awaitTermination(800, TimeUnit.MILLISECONDS)) {
-                executorService.shutdownNow();
-            }
-        } catch (InterruptedException e) {
-            executorService.shutdownNow();
-        }
-    }
 }

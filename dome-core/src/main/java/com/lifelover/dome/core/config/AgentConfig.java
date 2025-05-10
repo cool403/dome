@@ -10,6 +10,8 @@ public class AgentConfig {
 
     private List<String> supportMethods = new ArrayList<>();
 
+    private String reporterType = "HTTP";
+
     public AgentConfig(){
         //先简单支持后缀匹配,后续支持antUrlMatch
         ignoreUrls.add("/error");
@@ -19,6 +21,20 @@ public class AgentConfig {
         supportMethods.add("POST");
         supportMethods.add("DELETE");
     }
+
+    
+
+    public String getReporterType() {
+        return reporterType;
+    }
+
+
+
+    public void setReporterType(String reporterType) {
+        this.reporterType = reporterType;
+    }
+
+
 
     public String getCollectorUrl() {
         return collectorUrl;
