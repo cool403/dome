@@ -16,6 +16,7 @@ public class AgentConfig {
         //先简单支持后缀匹配,后续支持antUrlMatch
         ignoreUrls.add("/error");
         ignoreUrls.add("/swagger-ui");
+        ignoreUrls.add("/actuator/telemetry");
 
         supportMethods.add("GET");
         supportMethods.add("POST");
