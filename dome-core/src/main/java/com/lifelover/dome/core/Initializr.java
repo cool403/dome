@@ -35,15 +35,15 @@ public class Initializr {
      * @return
      */
     public static Map<String, String> toEnvMap(String args) {
-        if (args == null || args == "") {
+        if (args == null || args.equals("")) {
             return new HashMap<>();
         }
         final Map<String, String> paramMap = new HashMap<>(16);
         // 首先用"","分割，再用"=""分割
-        String[] paramStrs = args.split(",");
-        for (String paramStr : paramStrs) {
+        String[] paramStrArr = args.split(",");
+        for (String paramStr : paramStrArr) {
             String[] arr = paramStr.split("=");
-            if (arr == null || arr.length != 2) {
+            if (arr.length != 2) {
                 continue;
             }
             paramMap.put(arr[0], arr[1]);
