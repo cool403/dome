@@ -50,9 +50,11 @@ public class DispatcherServletDelegation {
                                                                 .getClass(ClassNames.HTTP_RESPONSE_CLASS_NAME))
                                                 .newInstance(response);
                         }
-                        //记录请求时间
-                         long reqTime = System.currentTimeMillis();
-                         ReflectMethods.invokeMethod(request.getClass(), MethodNames.SET_ATTR_METHOD, new Class[] {String.class, Object.class}, request, HeaderNames.X_REQUEST_TIME, reqTime);
+                        // 记录请求时间
+                        long reqTime = System.currentTimeMillis();
+                        ReflectMethods.invokeMethod(request.getClass(), MethodNames.SET_ATTR_METHOD,
+                                        new Class[] { String.class, Object.class }, request, HeaderNames.X_REQUEST_TIME,
+                                        reqTime);
                 } catch (Exception e) {
                         // Log the error but do not interrupt execution
                         e.printStackTrace();
@@ -74,8 +76,9 @@ public class DispatcherServletDelegation {
                 // 先这样写，后续根据不同应用的赋值方式区
                 String traceId = UUID.randomUUID().toString();
                 try {
-                        //获取请求时间
-                        Long reqTime = ReflectMethods.invokeMethod(requestClass, MethodNames.GET_ATTR_METHOD, new Class[] {String.class}, request, HeaderNames.X_REQUEST_TIME);
+                        // 获取请求时间
+                        Long reqTime = ReflectMethods.invokeMethod(requestClass, MethodNames.GET_ATTR_METHOD,
+                                        new Class[] { String.class }, request, HeaderNames.X_REQUEST_TIME);
                         // 获取请求路径
                         String requestUri = ReflectMethods.invokeMethod(requestClass,
                                         MethodNames.GET_REQUEST_URI_METHOD, request);
@@ -153,21 +156,16 @@ public class DispatcherServletDelegation {
                 if (!"POST".equals(httpMethod)) {
                         return "";
                 }
-                String requestBody = null;
                 // Check if request is not null and is an instance of HttpServletRequest
-                byte[] content1 = ReflectMethods.invokeMethod(request.getClass(),
+                byte[] bytes = ReflectMethods.invokeMethod(request.getClass(),
                                 MethodNames.GET_CONTENT_AS_BYTE_ARRAY_METHOD, request);
-                if (content1 == null || content1.length == 0) {
-                        return null;
+                if (bytes != null && bytes.length > 0) {
+                        return new String(bytes);
                 }
-                requestBody = new String(content1);
                 // 这里考虑到有可能后面方法并没有读取inputStream,导致无法争取取道输入，这里再手工读取下
-                if (requestBody.isEmpty()) {
-                        InputStream is = ReflectMethods.invokeMethod(request.getClass(), MethodNames.GET_IS_METHOD,
-                                        request);
-                        requestBody = StreamUtils.copyToString(is, StandardCharsets.UTF_8);
-                }
-                return requestBody;
+                InputStream is = ReflectMethods.invokeMethod(request.getClass(), MethodNames.GET_IS_METHOD,
+                                request);
+                return StreamUtils.copyToString(is, StandardCharsets.UTF_8);
         }
 
         /**
