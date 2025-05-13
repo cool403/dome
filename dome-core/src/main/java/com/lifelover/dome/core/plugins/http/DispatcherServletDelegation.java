@@ -7,6 +7,7 @@ import java.util.UUID;
 import com.lifelover.dome.core.config.AgentConfig;
 import com.lifelover.dome.core.config.ConfigLoader;
 import com.lifelover.dome.core.helpers.ClassNames;
+import com.lifelover.dome.core.helpers.HeaderNames;
 import com.lifelover.dome.core.helpers.MethodNames;
 import com.lifelover.dome.core.helpers.ReflectMethods;
 import com.lifelover.dome.core.helpers.StreamUtils;
@@ -49,6 +50,9 @@ public class DispatcherServletDelegation {
                                                                 .getClass(ClassNames.HTTP_RESPONSE_CLASS_NAME))
                                                 .newInstance(response);
                         }
+                        //记录请求时间
+                         long reqTime = System.currentTimeMillis();
+                         ReflectMethods.invokeMethod(request.getClass(), MethodNames.SET_ATTR_METHOD, new Class[] {String.class, Object.class}, request, HeaderNames.X_REQUEST_TIME, reqTime);
                 } catch (Exception e) {
                         // Log the error but do not interrupt execution
                         e.printStackTrace();
@@ -70,6 +74,8 @@ public class DispatcherServletDelegation {
                 // 先这样写，后续根据不同应用的赋值方式区
                 String traceId = UUID.randomUUID().toString();
                 try {
+                        //获取请求时间
+                        long reqTime = (Long) ReflectMethods.invokeMethod(requestClass, MethodNames.GET_ATTR_METHOD, new Class[] {String.class}, request, HeaderNames.X_REQUEST_TIME);
                         // 获取请求路径
                         String requestUri = ReflectMethods.invokeMethod(requestClass,
                                         MethodNames.GET_REQUEST_URI_METHOD, request);
@@ -104,7 +110,7 @@ public class DispatcherServletDelegation {
                                 metricsEvent.setHttpMethod(httpMethod);
                                 metricsEvent.setHttpUrl(requestUri);
                                 metricsEvent.setQueryParams(queryStringParams);
-                                metricsEvent.setReqTime(System.currentTimeMillis());
+                                metricsEvent.setReqTime(reqTime);
                                 metricsEvent.setRequestBody(requestBody);
                                 metricsEvent.setTraceId(traceId);
                                 EventReporterHolder.getEventReporter().asyncReport(metricsEvent);
@@ -121,7 +127,7 @@ public class DispatcherServletDelegation {
                         metricsEvent.setHttpStatus(httpStatus + "");
                         metricsEvent.setHttpMethod(httpMethod);
                         metricsEvent.setHttpUrl(requestUri);
-                        metricsEvent.setReqTime(System.currentTimeMillis());
+                        metricsEvent.setReqTime(reqTime);
                         metricsEvent.setQueryParams(queryStringParams);
                         metricsEvent.setRequestBody(requestBody);
                         metricsEvent.setResponseBody(responseBodyStr);

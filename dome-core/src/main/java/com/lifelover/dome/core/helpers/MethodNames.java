@@ -17,6 +17,8 @@ public class MethodNames {
     public static final String GET_METHOD = "getMethod";
     public static final String GET_HEADER_METHOD = "getHeader";
     public static final String GET_QUERY_STRING_METHOD = "getQueryString";
+    public static final String SET_ATTR_METHOD = "setAttribute";
+    public static final String GET_ATTR_METHOD = "getAttribute";
 
 
     public static final String GET_CONTENT_TYPE_METHOD = "getContentType";
