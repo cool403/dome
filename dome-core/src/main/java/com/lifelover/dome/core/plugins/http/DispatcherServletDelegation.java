@@ -49,7 +49,6 @@ public class DispatcherServletDelegation {
                                                                 .getClass(ClassNames.HTTP_RESPONSE_CLASS_NAME))
                                                 .newInstance(response);
                         }
-
                 } catch (Exception e) {
                         // Log the error but do not interrupt execution
                         e.printStackTrace();
@@ -65,16 +64,17 @@ public class DispatcherServletDelegation {
                 AgentConfig agentConfig = ConfigLoader.getAgentConfig();
                 String requestBody = null;
                 String responseBodyStr = null;
+                Class<?> requestClass = request.getClass();
+                Class<?> responseClass = response.getClass();
+
                 // 先这样写，后续根据不同应用的赋值方式区
                 String traceId = UUID.randomUUID().toString();
                 try {
                         // 获取请求路径
-                        final String requestUri = (String) ReflectMethods
-                                        .getMethod(request.getClass(), MethodNames.GET_REQUEST_URI_METHOD)
-                                        .invoke(request);
-                        String contentType = (String) ReflectMethods
-                                        .getMethod(request.getClass(), MethodNames.GET_CONTENT_TYPE_METHOD)
-                                        .invoke(request);
+                        String requestUri = ReflectMethods.invokeMethod(requestClass,
+                                        MethodNames.GET_REQUEST_URI_METHOD, request);
+                        String contentType = ReflectMethods.invokeMethod(requestClass,
+                                        MethodNames.GET_CONTENT_TYPE_METHOD, request);
                         // 可支持忽略哪些路径不采集,默认/error
                         boolean shouldIgnore = false;
                         for (String ignoreUrl : agentConfig.getIgnoreUrls()) {
@@ -84,19 +84,16 @@ public class DispatcherServletDelegation {
                                 }
                         }
                         // 忽略特定的方法
-                        String httpMethod = (String) ReflectMethods
-                                        .getMethod(request.getClass(), MethodNames.GET_METHOD).invoke(request);
+                        String httpMethod = ReflectMethods.invokeMethod(requestClass, MethodNames.GET_METHOD, request);
                         shouldIgnore = shouldIgnore || !agentConfig.getSupportMethods().contains(httpMethod);
                         if (shouldIgnore) {
                                 return;
                         }
-                        final int httpStatus = (int) ReflectMethods
-                                        .getMethod(response.getClass(), MethodNames.GET_STATUS_METHOD)
-                                        .invoke(response);
+                        int httpStatus = ReflectMethods.invokeMethod(responseClass, MethodNames.GET_STATUS_METHOD,
+                                        response);
                         // 获取queryString
-                        final String queryStringParams = (String) ReflectMethods
-                                        .getMethod(request.getClass(), MethodNames.GET_QUERY_STRING_METHOD)
-                                        .invoke(request);
+                        String queryStringParams = ReflectMethods.invokeMethod(requestClass,
+                                        MethodNames.GET_QUERY_STRING_METHOD, request);
                         if (httpStatus >= 400) {
                                 // System.out.println("request uri: " + requestUri + ", http status:" +
                                 // httpStatus);
@@ -134,8 +131,7 @@ public class DispatcherServletDelegation {
                         System.out.println("intercept on doDispatch error." + e.getMessage());
                 } finally {
                         // Copy the response body to the response
-                        ReflectMethods.getMethod(response.getClass(), MethodNames.COPY_BODY_TO_RESPONSE_METHOD)
-                                        .invoke(response);
+                        ReflectMethods.invokeMethod(responseClass, MethodNames.COPY_BODY_TO_RESPONSE_METHOD, response);
                 }
         }
 
@@ -153,18 +149,16 @@ public class DispatcherServletDelegation {
                 }
                 String requestBody = null;
                 // Check if request is not null and is an instance of HttpServletRequest
-                byte[] content1 = (byte[]) ReflectMethods
-                                .getMethod(request.getClass(), MethodNames.GET_CONTENT_AS_BYTE_ARRAY_METHOD)
-                                .invoke(request);
+                byte[] content1 = ReflectMethods.invokeMethod(request.getClass(),
+                                MethodNames.GET_CONTENT_AS_BYTE_ARRAY_METHOD, request);
                 if (content1 == null || content1.length == 0) {
                         return null;
                 }
                 requestBody = new String(content1);
                 // 这里考虑到有可能后面方法并没有读取inputStream,导致无法争取取道输入，这里再手工读取下
                 if (requestBody.isEmpty()) {
-                        InputStream is = (InputStream) ReflectMethods
-                                        .getMethod(request.getClass(), MethodNames.GET_IS_METHOD)
-                                        .invoke(request);
+                        InputStream is = ReflectMethods.invokeMethod(request.getClass(), MethodNames.GET_IS_METHOD,
+                                        request);
                         requestBody = StreamUtils.copyToString(is, StandardCharsets.UTF_8);
                 }
                 return requestBody;
@@ -178,9 +172,8 @@ public class DispatcherServletDelegation {
          */
         public static String getResponseBody(Object response) throws Exception {
                 // Check if response is not null and is an instance of HttpServletResponse
-                byte[] content = (byte[]) ReflectMethods
-                                .getMethod(response.getClass(), MethodNames.GET_CONTENT_AS_BYTE_ARRAY_METHOD)
-                                .invoke(response);
+                byte[] content = ReflectMethods.invokeMethod(response.getClass(),
+                                MethodNames.GET_CONTENT_AS_BYTE_ARRAY_METHOD, response);
                 if (content == null || content.length == 0) {
                         return null;
                 }

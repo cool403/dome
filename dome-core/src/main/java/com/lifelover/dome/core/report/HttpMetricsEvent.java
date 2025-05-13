@@ -2,7 +2,9 @@ package com.lifelover.dome.core.report;
 
 public class HttpMetricsEvent implements MetricsEvent {
     private String traceId;
+    private Long metricTime;
     private Long reqTime;
+    private Long respTime;
     private String httpMethod;
     private String httpStatus;
     private String httpUrl;
@@ -74,12 +76,31 @@ public class HttpMetricsEvent implements MetricsEvent {
         this.reqTime = reqTime;
     }
 
+    public void setRespTime(Long respTime) {
+        this.respTime = respTime;
+    }
+
+    public Long getRespTime() {
+        return respTime;
+    }
+
+    public Long getMetricTime() {
+        return metricTime;
+    }
+
+    public void setMetricTime(Long metricTime) {
+        this.metricTime = metricTime;
+    }
+
     @Override
     public String jsonStr() {
         StringBuilder json = new StringBuilder("{");
         String eventId = getEventId();
+        final long now = System.currentTimeMillis();
         json.append("\"eventId\":\"").append(eventId).append("\",");
+        json.append("\"metricTime\":\"").append(now).append("\",");
         json.append("\"reqTime\":\"").append(reqTime).append("\",");
+        json.append("\"respTime\":\"").append(now).append("\",");
         json.append("\"httpMethod\":\"").append(httpMethod == null ? "" : httpMethod).append("\",");
         json.append("\"httpStatus\":\"").append(httpStatus == null ? "" : httpStatus).append("\",");
         json.append("\"httpUrl\":\"").append(httpUrl == null ? "" : httpUrl).append("\",");
