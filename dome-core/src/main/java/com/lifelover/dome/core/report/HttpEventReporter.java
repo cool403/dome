@@ -14,7 +14,7 @@ public class HttpEventReporter extends AbstractEventReporter{
     protected void handle(MetricsEvent metricsEvent) {
         String reportUrl = ConfigLoader.getAgentConfig().getCollectorUrl();
         // String reportUrl = "http://127.0.0.1:5000/items";
-        if (reportUrl == null || reportUrl == "") {
+        if (reportUrl == null || reportUrl.equals("")) {
             System.out.println("收集器地址为空");
             return;
         }
