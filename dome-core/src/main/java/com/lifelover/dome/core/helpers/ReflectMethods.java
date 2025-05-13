@@ -29,7 +29,7 @@ public class ReflectMethods {
             return cachedMethod;
         }
         try {
-            final Method method = clazz.getMethod(methodName);
+            final Method method = clazz.getMethod(methodName, parameterTypes);
             methodCache.put(key, method);
             return method;
         } catch (Exception e) {
