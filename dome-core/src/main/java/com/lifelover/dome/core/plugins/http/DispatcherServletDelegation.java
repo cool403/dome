@@ -75,7 +75,7 @@ public class DispatcherServletDelegation {
                 String traceId = UUID.randomUUID().toString();
                 try {
                         //获取请求时间
-                        long reqTime = (Long) ReflectMethods.invokeMethod(requestClass, MethodNames.GET_ATTR_METHOD, new Class[] {String.class}, request, HeaderNames.X_REQUEST_TIME);
+                        Long reqTime = ReflectMethods.invokeMethod(requestClass, MethodNames.GET_ATTR_METHOD, new Class[] {String.class}, request, HeaderNames.X_REQUEST_TIME);
                         // 获取请求路径
                         String requestUri = ReflectMethods.invokeMethod(requestClass,
                                         MethodNames.GET_REQUEST_URI_METHOD, request);
