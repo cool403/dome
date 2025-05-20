@@ -31,7 +31,7 @@ public class DispatcherServletBbPlugin implements BbPlugin {
 
     @Override
     public String getBpPluginName() {
-        return "DSBB";
+        return "DispatchServlet-plugin";
     }
 
 }

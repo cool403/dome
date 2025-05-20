@@ -30,7 +30,7 @@ public class OkhttpBbPlugin implements BbPlugin{
 
     @Override
     public String getBpPluginName() {
-        return "Okhttp";
+        return "Okhttp-plugin";
     }
     
 }
