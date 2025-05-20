@@ -4,6 +4,7 @@ public class ClassNames {
     private ClassNames() {
     }
 
+    /////////////spring//////////
     public static final String DISPATCHER_SERVLET_CLASS_NAME = "org.springframework.web.servlet.DispatcherServlet";
     public static final String HTTP_REQUEST_CLASS_NAME = "javax.servlet.http.HttpServletRequest";
     public static final String HTTP_RESPONSE_CLASS_NAME = "javax.servlet.http.HttpServletResponse";
@@ -11,4 +12,8 @@ public class ClassNames {
 
     public static final String CONTENT_CACHING_RESPONSE_WRAPPER_CLASS_NAME = "org.springframework.web.util.ContentCachingResponseWrapper";
     public static final String CONTENT_CACHING_REQUEST_WRAPPER_CLASS_NAME = "org.springframework.web.util.ContentCachingRequestWrapper";
+
+
+    ////////////okhttp////////
+    public static final String REAL_CALL_CLASS_NAME = "okhttp3.internal.connection.RealCall";
 }

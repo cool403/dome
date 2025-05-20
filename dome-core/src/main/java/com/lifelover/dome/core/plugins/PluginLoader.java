@@ -6,6 +6,7 @@ import java.util.Map;
 
 import com.lifelover.dome.core.plugins.feign.FeignPlugin;
 import com.lifelover.dome.core.plugins.http.DispatcherServletBbPlugin;
+import com.lifelover.dome.core.plugins.okhttp.OkhttpBbPlugin;
 
 public class PluginLoader {
     private PluginLoader(){
@@ -26,6 +27,7 @@ public class PluginLoader {
             BbPlugin dsbb = new DispatcherServletBbPlugin();
             BbPlugin feignPlugin = new FeignPlugin();
             pluginLst.add(feignPlugin);
+            pluginLst.add(new OkhttpBbPlugin());
             pluginLst.add(dsbb);
         }
     }

@@ -4,6 +4,8 @@ public class MethodNames {
     private MethodNames() {
     }
 
+
+    ////////spring///////////
     public static final String GET_STATUS_METHOD = "getStatus";
     public static final String GET_REQUEST_URL_METHOD = "getRequestURL";
     public static final String GET_REQUEST_URI_METHOD = "getRequestURI";
@@ -23,5 +25,9 @@ public class MethodNames {
 
     public static final String GET_CONTENT_TYPE_METHOD = "getContentType";
     // public static final String IS_MULTIPART_METHOD = "isMultipart";
+
+
+    //////////////okhttp//////
+    public static final String EXECUTE_METHOD = "execute";
     
 }
