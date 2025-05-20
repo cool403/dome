@@ -6,7 +6,7 @@ public class RealCallDelegation {
 
     private static final long MAX_BODY_SIZE = 1024 * 1024; // 1MB
 
-    @Advice.OnMethodEnter
+    @Advice.OnMethodEnter()
     public static void onMethodEnter(@Advice.This Object call) {
         System.out.println("111111111");
         try {
