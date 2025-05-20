@@ -25,7 +25,6 @@ public class OkhttpBbPlugin implements BbPlugin{
                         return builder.method(ElementMatchers.named(MethodNames.EXECUTE_METHOD))
                                 .intercept(Advice.to(RealCallDelegation.class));
                     }
-
                 });
     }
 
