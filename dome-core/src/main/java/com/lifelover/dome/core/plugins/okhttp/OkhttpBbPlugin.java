@@ -11,11 +11,11 @@ import net.bytebuddy.dynamic.DynamicType.Builder;
 import net.bytebuddy.matcher.ElementMatchers;
 import net.bytebuddy.utility.JavaModule;
 
-public class OkhttpBbPlugin implements BbPlugin{
+public class OkhttpBbPlugin implements BbPlugin {
 
     @Override
     public AgentBuilder apply(AgentBuilder agentBuilder) {
-                return agentBuilder.type(ElementMatchers.named(ClassNames.REAL_CALL_CLASS_NAME))
+        return agentBuilder.type(ElementMatchers.named(ClassNames.REAL_CALL_CLASS_NAME))
                 .transform(new BbTransformer() {
                     @Override
                     protected Builder<?> build(Builder<?> builder, TypeDescription typeDescription,
@@ -32,5 +32,5 @@ public class OkhttpBbPlugin implements BbPlugin{
     public String getBpPluginName() {
         return "Okhttp-plugin";
     }
-    
+
 }
