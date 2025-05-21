@@ -1,6 +1,6 @@
 package com.lifelover.dome.core.report;
 
-public class HttpMetricsEvent implements MetricsEvent {
+public class HttpMetricsData{
     private String traceId;
     private Long metricTime;
     private Long reqTime;
@@ -92,23 +92,23 @@ public class HttpMetricsEvent implements MetricsEvent {
         this.metricTime = metricTime;
     }
 
-    @Override
-    public String jsonStr() {
-        StringBuilder json = new StringBuilder("{");
-        String eventId = getEventId();
-        final long now = System.currentTimeMillis();
-        json.append("\"eventId\":\"").append(eventId).append("\",");
-        json.append("\"metricTime\":\"").append(now).append("\",");
-        json.append("\"reqTime\":\"").append(reqTime).append("\",");
-        json.append("\"respTime\":\"").append(now).append("\",");
-        json.append("\"httpMethod\":\"").append(httpMethod == null ? "" : httpMethod).append("\",");
-        json.append("\"httpStatus\":\"").append(httpStatus == null ? "" : httpStatus).append("\",");
-        json.append("\"httpUrl\":\"").append(httpUrl == null ? "" : httpUrl).append("\",");
-        json.append("\"queryParams\":\"").append(queryParams == null ? "" : queryParams).append("\",");
-        json.append("\"requestBody\":\"").append(requestBody == null ? "" : requestBody.replace("\"", "\\\"")).append("\",");
-        json.append("\"responseBody\":\"").append(responseBody == null ? "" : responseBody.replace("\"", "\\\"")).append("\",");
-        json.append("\"traceId\":\"").append(traceId == null ? "" : traceId).append("\"");
-        json.append("}");
-        return json.toString();
-    }
+    // @Override
+    // public String jsonStr() {
+    //     StringBuilder json = new StringBuilder("{");
+    //     String eventId = getEventId();
+    //     final long now = System.currentTimeMillis();
+    //     json.append("\"eventId\":\"").append(eventId).append("\",");
+    //     json.append("\"metricTime\":\"").append(now).append("\",");
+    //     json.append("\"reqTime\":\"").append(reqTime).append("\",");
+    //     json.append("\"respTime\":\"").append(now).append("\",");
+    //     json.append("\"httpMethod\":\"").append(httpMethod == null ? "" : httpMethod).append("\",");
+    //     json.append("\"httpStatus\":\"").append(httpStatus == null ? "" : httpStatus).append("\",");
+    //     json.append("\"httpUrl\":\"").append(httpUrl == null ? "" : httpUrl).append("\",");
+    //     json.append("\"queryParams\":\"").append(queryParams == null ? "" : queryParams).append("\",");
+    //     json.append("\"requestBody\":\"").append(requestBody == null ? "" : requestBody.replace("\"", "\\\"")).append("\",");
+    //     json.append("\"responseBody\":\"").append(responseBody == null ? "" : responseBody.replace("\"", "\\\"")).append("\",");
+    //     json.append("\"traceId\":\"").append(traceId == null ? "" : traceId).append("\"");
+    //     json.append("}");
+    //     return json.toString();
+    // }
 }

@@ -3,6 +3,7 @@ package com.lifelover.dome.core.report;
 import java.io.IOException;
 
 import com.lifelover.dome.core.config.ConfigLoader;
+import com.lifelover.dome.core.helpers.JsonUtil;
 
 public class HttpEventReporter extends AbstractEventReporter{
 
@@ -19,7 +20,7 @@ public class HttpEventReporter extends AbstractEventReporter{
             return;
         }
         try {
-            HttpUtil.post(reportUrl, metricsEvent.jsonStr(), REQUEST_TIMEOUT_MS);
+            HttpUtil.post(reportUrl, JsonUtil.toJson(metricsEvent), REQUEST_TIMEOUT_MS);
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

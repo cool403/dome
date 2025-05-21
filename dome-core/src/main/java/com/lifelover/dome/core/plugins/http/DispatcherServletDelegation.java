@@ -13,7 +13,8 @@ import com.lifelover.dome.core.helpers.ReflectMethods;
 import com.lifelover.dome.core.helpers.StreamUtils;
 import com.lifelover.dome.core.helpers.TargetAppClassRegistry;
 import com.lifelover.dome.core.report.EventReporterHolder;
-import com.lifelover.dome.core.report.HttpMetricsEvent;
+import com.lifelover.dome.core.report.HttpMetricsData;
+import com.lifelover.dome.core.report.MetricsEvent;
 
 import net.bytebuddy.asm.Advice;
 import net.bytebuddy.implementation.bytecode.assign.Assigner;
@@ -108,15 +109,17 @@ public class DispatcherServletDelegation {
                                 // httpStatus);
                                 // 状态码不对的也需要记录输入内容
                                 requestBody = getRequestBody(request, httpMethod);
-                                HttpMetricsEvent metricsEvent = new HttpMetricsEvent();
-                                metricsEvent.setHttpStatus(httpStatus + "");
-                                metricsEvent.setHttpMethod(httpMethod);
-                                metricsEvent.setHttpUrl(requestUri);
-                                metricsEvent.setQueryParams(queryStringParams);
-                                metricsEvent.setReqTime(reqTime);
-                                metricsEvent.setRequestBody(requestBody);
-                                metricsEvent.setTraceId(traceId);
-                                EventReporterHolder.getEventReporter().asyncReport(metricsEvent);
+                                HttpMetricsData metricsData = new HttpMetricsData();
+                                metricsData.setHttpStatus(httpStatus + "");
+                                metricsData.setHttpMethod(httpMethod);
+                                metricsData.setHttpUrl(requestUri);
+                                metricsData.setQueryParams(queryStringParams);
+                                metricsData.setReqTime(reqTime);
+                                metricsData.setRequestBody(requestBody);
+                                metricsData.setTraceId(traceId);
+                                MetricsEvent<HttpMetricsData> event = new MetricsEvent<HttpMetricsData>();
+                                event.setEventData(metricsData);
+                                EventReporterHolder.getEventReporter().asyncReport(event);
                                 return;
                         }
                         // 上传请求200 情况 下不做特殊处理
@@ -126,7 +129,7 @@ public class DispatcherServletDelegation {
                         }
                         responseBodyStr = getResponseBody(response);
                         requestBody = getRequestBody(request, httpMethod);
-                        HttpMetricsEvent metricsEvent = new HttpMetricsEvent();
+                        HttpMetricsData metricsEvent = new HttpMetricsData();
                         metricsEvent.setHttpStatus(httpStatus + "");
                         metricsEvent.setHttpMethod(httpMethod);
                         metricsEvent.setHttpUrl(requestUri);
@@ -135,7 +138,9 @@ public class DispatcherServletDelegation {
                         metricsEvent.setRequestBody(requestBody);
                         metricsEvent.setResponseBody(responseBodyStr);
                         metricsEvent.setTraceId(traceId);
-                        EventReporterHolder.getEventReporter().asyncReport(metricsEvent);
+                        MetricsEvent<HttpMetricsData> event = new MetricsEvent<HttpMetricsData>();
+                        event.setEventData(metricsEvent);
+                        EventReporterHolder.getEventReporter().asyncReport(event);
                 } catch (Exception e) {
                         System.out.println("intercept on doDispatch error." + e.getMessage());
                 } finally {
