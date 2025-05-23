@@ -23,7 +23,7 @@ public class OkhttpBbPlugin extends AbstractBbPlugin {
                     protected Builder<?> build(Builder<?> builder, TypeDescription typeDescription,
                             ClassLoader classLoader,
                             JavaModule module) {
-                        System.out.println("Trying to transform: " + typeDescription + " loaded by: " + classLoader);
+                        // System.out.println("Trying to transform: " + typeDescription + " loaded by: " + classLoader);
                         return builder.method(ElementMatchers.named(MethodNames.EXECUTE_METHOD)
                         .and(ElementMatchers.isDeclaredBy(typeDescription)))
                                 .intercept(Advice.to(RealCallDelegation.class).wrap(SuperMethodCall.INSTANCE));
