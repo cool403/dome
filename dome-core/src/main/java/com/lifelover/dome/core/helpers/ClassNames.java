@@ -15,5 +15,5 @@ public class ClassNames {
 
 
     ////////////okhttp////////
-    public static final String REAL_CALL_CLASS_NAME = "okhttp3.internal.connection.RealCall";
+    public static final String REAL_CALL_CLASS_NAME = "okhttp3.Call";
 }
