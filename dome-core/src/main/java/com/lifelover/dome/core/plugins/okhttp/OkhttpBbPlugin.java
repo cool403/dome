@@ -16,7 +16,7 @@ public class OkhttpBbPlugin implements BbPlugin {
     @Override
     public AgentBuilder apply(AgentBuilder agentBuilder) {
         return agentBuilder.type(ElementMatchers.hasSuperType(ElementMatchers.named(ClassNames.REAL_CALL_CLASS_NAME))
-        .and(ElementMatchers.not(ElementMatchers.isAbstract())))
+                .and(ElementMatchers.not(ElementMatchers.isAbstract())))
                 .transform(new BbTransformer() {
                     @Override
                     protected Builder<?> build(Builder<?> builder, TypeDescription typeDescription,
