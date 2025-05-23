@@ -35,17 +35,17 @@ public class RealCallDelegation {
         }
 
         try {
-            Object newResponse = handleResponseBody(response);
-            logResponseInfo(newResponse);
+            // Object newResponse = handleResponseBody(response);
+            // logResponseInfo(newResponse);
 
             // 返回修改后的response
-            response = newResponse;
+            // response = newResponse;
         } catch (Exception e) {
             System.err.println("Failed to process response: " + e.getMessage());
         }
     }
 
-    private static Object handleRequestBody(Object originalRequest) throws Exception {
+    public static Object handleRequestBody(Object originalRequest) throws Exception {
         Object requestBody = originalRequest.getClass().getMethod("body").invoke(originalRequest);
         if (requestBody == null) {
             return originalRequest;
@@ -83,44 +83,7 @@ public class RealCallDelegation {
                         newRequestBody);
     }
 
-    private static Object handleResponseBody(Object originalResponse) throws Exception {
-        Object responseBody = originalResponse.getClass().getMethod("body").invoke(originalResponse);
-        if (responseBody == null) {
-            return originalResponse;
-        }
-
-        // 获取响应体元数据
-        Object contentType = responseBody.getClass().getMethod("contentType").invoke(responseBody);
-        long contentLength = (long) responseBody.getClass().getMethod("contentLength").invoke(responseBody);
-
-        // 跳过过大响应体
-        if (contentLength > MAX_BODY_SIZE) {
-            System.out.println("  Response Body - Skipped: too large (" + contentLength + " bytes)");
-            return originalResponse;
-        }
-
-        // 读取原始响应体内容
-        Object source = responseBody.getClass().getMethod("source").invoke(responseBody);
-        Class<?> bufferClass = Class.forName("okio.Buffer");
-        Object buffer = bufferClass.newInstance();
-        source.getClass().getMethod("readAll", bufferClass).invoke(source, buffer);
-        String content = buffer.getClass().getMethod("readUtf8").invoke(buffer).toString();
-
-        // 重建响应体
-        Class<?> responseBodyClass = Class.forName("okhttp3.ResponseBody");
-        Object newResponseBody = responseBodyClass.getMethod("create",
-                Class.forName("okhttp3.MediaType"),
-                long.class,
-                Class.forName("okio.BufferedSource"))
-                .invoke(null, contentType, contentLength, buffer);
-
-        // 重建响应
-        return originalResponse.getClass().getMethod("newBuilder").invoke(originalResponse)
-                .getClass().getMethod("body", responseBodyClass)
-                .invoke(newResponseBody);
-    }
-
-    private static void logRequestInfo(Object request) throws Exception {
+    public static void logRequestInfo(Object request) throws Exception {
         System.out.println("[OkHttp] Request:");
         System.out.println("  URL: " + invokeMethod(request, "url"));
         System.out.println("  Method: " + invokeMethod(request, "method"));
@@ -141,35 +104,13 @@ public class RealCallDelegation {
         }
     }
 
-    private static void logResponseInfo(Object response) throws Exception {
-        System.out.println("[OkHttp] Response:");
-        System.out.println("  Code: " + invokeMethod(response, "code"));
-        System.out.println("  Message: " + invokeMethod(response, "message"));
-        System.out.println("  Headers: " + headersToString(invokeMethod(response, "headers")));
-
-        Object body = invokeMethod(response, "body");
-        if (body != null) {
-            System.out.println("  Body - Type: " + invokeMethod(body, "contentType"));
-            System.out.println("  Body - Length: " + invokeMethod(body, "contentLength"));
-
-            // 对于文本内容直接打印
-            if (invokeMethod(body, "contentType").toString().contains("text") ||
-                    invokeMethod(body, "contentType").toString().contains("json") ||
-                    invokeMethod(body, "contentType").toString().contains("xml")) {
-                Object source = body.getClass().getMethod("source").invoke(body);
-                String content = source.getClass().getMethod("readUtf8").invoke(source).toString();
-                System.out.println("  Body - Content: " + content);
-            }
-        }
-    }
-
-    private static Object invokeMethod(Object obj, String methodName) throws Exception {
+    public static Object invokeMethod(Object obj, String methodName) throws Exception {
         if (obj == null)
             return null;
         return obj.getClass().getMethod(methodName).invoke(obj);
     }
 
-    private static String headersToString(Object headers) throws Exception {
+    public static String headersToString(Object headers) throws Exception {
         if (headers == null)
             return "null";
 
