@@ -1,5 +1,12 @@
 package com.lifelover.dome.core.plugins.okhttp;
 
+import java.lang.reflect.Method;
+
+import com.lifelover.dome.core.helpers.ClassNames;
+import com.lifelover.dome.core.helpers.MethodNames;
+import com.lifelover.dome.core.helpers.ReflectMethods;
+import com.lifelover.dome.core.helpers.TargetAppClassRegistry;
+
 import net.bytebuddy.asm.Advice;
 
 public class RealCallDelegation {
@@ -8,17 +15,35 @@ public class RealCallDelegation {
 
     @Advice.OnMethodEnter()
     public static void onMethodEnter(@Advice.This Object call) {
-        System.out.println("111111111");
+        Class<?> callClz = call.getClass();
+        Class<?> bufferClz = TargetAppClassRegistry.getClass(ClassNames.BUFFER_CLASS_NAME);
         try {
-            Object originalRequest = call.getClass().getMethod("request").invoke(call);
-
-            // 处理请求体并创建新请求
-            Object newRequest = handleRequestBody(originalRequest);
-
-            // 将新请求设置回call对象
-            call.getClass().getMethod("request", originalRequest.getClass()).invoke(call, newRequest);
-
-            logRequestInfo(newRequest);
+            //获取请求
+            Object originalRequest = ReflectMethods.invokeMethod(callClz, MethodNames.REQUEST_METHOD,call);
+            //获取请求头
+            Object headers = ReflectMethods.invokeMethod(callClz, MethodNames.HEADERS_METHOD,originalRequest);
+            //获取请求方法
+            String method = ReflectMethods.invokeMethod(callClz, MethodNames.METHOD_METHOD,originalRequest);
+            //获取请求url
+            String url = ReflectMethods.invokeMethod(callClz, MethodNames.URL_METHOD,originalRequest).toString();
+            //post 记录请求体
+            if (null != method && "POST".equals(method)) {
+                Object requestBody = ReflectMethods.invokeMethod(callClz, MethodNames.BODY_METHOD,originalRequest);
+                if (requestBody != null && bufferClz != null) {
+                    Class<?> requestBodyClz = requestBody.getClass();
+                    //获取contentType
+                    Object contentType = ReflectMethods.invokeMethod(requestBodyClz, MethodNames.CONTENT_TYPE_METHOD, requestBody);
+                    Object buffer = bufferClz.getConstructor().newInstance();
+                    ReflectMethods.invokeMethod(requestBodyClz, MethodNames.WRITE_TO_METHOD,buffer);
+                    //获取字节数据，并且复制
+                    byte[] bytes = (byte[]) ReflectMethods.invokeMethod(bufferClz, MethodNames.BYTES_METHOD,buffer);
+                    Class<?> mediaTypeClz = TargetAppClassRegistry.getClass(ClassNames.MEDIA_TYPE_CLASS_NAME);
+                    Method createMethod = ReflectMethods.getMethod(requestBodyClz, MethodNames.CREATE_METHOD,mediaTypeClz,byte[].class);
+                    Object newRequestBody = createMethod.invoke(null,contentType,bytes);
+                    Object copiedRequest = ReflectMethods.invokeMethod(originalRequest.getClass(), MethodNames.NEW_BUILDER_METHOD,originalRequest);
+                }
+            }
+            
         } catch (Exception e) {
             System.err.println("Failed to process request: " + e.getMessage());
         }

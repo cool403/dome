@@ -29,5 +29,15 @@ public class MethodNames {
 
     //////////////okhttp//////
     public static final String EXECUTE_METHOD = "execute";
+    public static final String REQUEST_METHOD = "request";
+    public static final String NEW_BUILDER_METHOD = "newBuilder";
+    public static final String HEADERS_METHOD = "headers";
+    public static final String BODY_METHOD = "body";
+    public static final String METHOD_METHOD = "method";
+    public static final String URL_METHOD = "url";
+    public static final String WRITE_TO_METHOD = "writeTo";
+    public static final String BYTES_METHOD = "bytes";
+    public static final String CREATE_METHOD = "create";
+    public static final String CONTENT_TYPE_METHOD = "contentType";
     
 }
