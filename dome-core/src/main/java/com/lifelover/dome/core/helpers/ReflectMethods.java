@@ -59,6 +59,7 @@ public class ReflectMethods {
             }
             return (T) result;
         } catch (Exception ex) {
+            ex.printStackTrace();
             System.err.println("invoke method=" + method.getName() + " error:" + ex.getStackTrace());
         }
         return null;
@@ -76,6 +77,7 @@ public class ReflectMethods {
     public static <T> T invokeMethod(Class<?> clazz, String methodName, Class<?>[] parameterTypes, Object obj,
             Object... args) {
         Method method = getMethod(clazz, methodName, parameterTypes);
+        method.setAccessible(true);
         return invokeMethod(method, obj, args);
     }
 

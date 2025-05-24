@@ -26,17 +26,20 @@ public class RealCallDelegation {
             httpMetricsDataThreadLocal.remove();
             // 获取请求
             Object originalRequest = ReflectMethods.invokeMethod(callClz, MethodNames.REQUEST_METHOD, call);
+            System.out.println("originalRequest: " + originalRequest);
             if (originalRequest == null) {
                 return;
             }
             Class<?> originalRequestClz = originalRequest.getClass();
 
             // 获取请求头
-            Object headers = ReflectMethods.invokeMethod(originalRequestClz, MethodNames.HEADERS_METHOD, originalRequest);
+            Object headers = ReflectMethods.invokeMethod(originalRequestClz, MethodNames.HEADERS_METHOD,
+                    originalRequest);
             // 获取请求方法
             String method = ReflectMethods.invokeMethod(originalRequestClz, MethodNames.METHOD_METHOD, originalRequest);
             // 获取请求url
-            String url = ReflectMethods.invokeMethod(originalRequestClz, MethodNames.URL_METHOD, originalRequest).toString();
+            String url = ReflectMethods.invokeMethod(originalRequestClz, MethodNames.URL_METHOD, originalRequest)
+                    .toString();
             // post 记录请求体
             if (null != method && "POST".equals(method)) {
                 Object requestBody = ReflectMethods.invokeMethod(callClz, MethodNames.BODY_METHOD, originalRequest);
@@ -53,17 +56,19 @@ public class RealCallDelegation {
                     Method createMethod = ReflectMethods.getMethod(requestBodyClz, MethodNames.CREATE_METHOD,
                             mediaTypeClz, byte[].class);
                     Object newRequestBody = createMethod.invoke(null, contentType, bytes);
-                    Object newRequestBuilder = ReflectMethods.invokeMethod(originalRequestClz, MethodNames.NEW_BUILDER_METHOD, originalRequest);
+                    Object newRequestBuilder = ReflectMethods.invokeMethod(originalRequestClz.getSuperclass(),
+                            MethodNames.NEW_BUILDER_METHOD, originalRequest);
                     Class<?> newRequestBuilderClz = newRequestBuilder.getClass();
-                    newRequestBuilder = ReflectMethods.invokeMethod(newRequestBuilderClz, MethodNames.BODY_METHOD, newRequestBuilder, newRequestBody);
-                    Object newRequest = ReflectMethods.invokeMethod(newRequestBuilderClz, MethodNames.BUILD_METHOD, newRequestBuilder);
-
-                    // 重新设置请求
-                    ReflectMethods.invokeMethod(callClz, MethodNames.REQUEST_METHOD, call, newRequest);
+                    newRequestBuilder = ReflectMethods.invokeMethod(newRequestBuilderClz, MethodNames.BODY_METHOD,
+                            new Class[] { requestBodyClz },
+                            newRequestBuilder, newRequestBody);
+                    Object newRequest = ReflectMethods.invokeMethod(newRequestBuilderClz, MethodNames.BUILD_METHOD,
+                            newRequestBuilder);
                     // 3. 替换原始Request（通过反射修改字段）
                     ReflectMethods.setFieldValue(call, "originalRequest", newRequest);
                 }
             }
+            System.out.println("originalRequest111111: " + originalRequest);
             HttpMetricsData httpMetricsData = new HttpMetricsData();
             httpMetricsData.setHttpMethod(method);
             httpMetricsData.setHttpUrl(url);
@@ -71,7 +76,7 @@ public class RealCallDelegation {
             httpMetricsData.setMetricTime(System.currentTimeMillis());
             httpMetricsData.setReqTime(System.currentTimeMillis());
             httpMetricsData.setRespTime(System.currentTimeMillis());
-            httpMetricsData.setTraceId("traceId");
+            httpMetricsData.setTraceId(null);
             httpMetricsDataThreadLocal.set(httpMetricsData);
         } catch (Exception e) {
             e.printStackTrace();
@@ -116,7 +121,6 @@ public class RealCallDelegation {
             // 打印日志
             System.out.println("Response body: " + new String(bytes));
 
-
             // 由于流是单次读取，所以创建新的response
             Object newResponseBuilder = ReflectMethods.invokeMethod(responseClz, MethodNames.NEW_BUILDER_METHOD,
                     response);
@@ -127,11 +131,13 @@ public class RealCallDelegation {
                     new Class[] { TargetAppClassRegistry.getClass(ClassNames.MEDIA_TYPE_CLASS_NAME), byte[].class },
                     null, mediaType, bytes);
             // 设置新的ResponseBody
-            newResponseBuilder = ReflectMethods.invokeMethod(newResponseBuilderClz, MethodNames.BODY_METHOD,newResponseBuilder, newResponseBody);
+            newResponseBuilder = ReflectMethods.invokeMethod(newResponseBuilderClz, MethodNames.BODY_METHOD,
+                    new Class[] { responseBodyClz.getSuperclass() }, newResponseBuilder, newResponseBody);
             // 创建新的Response
-            Object newResponse = ReflectMethods.invokeMethod(newResponseBuilderClz, MethodNames.BUILD_METHOD,newResponseBuilder);
+            Object newResponse = ReflectMethods.invokeMethod(newResponseBuilderClz, MethodNames.BUILD_METHOD,
+                    newResponseBuilder);
 
-            //记录metrics
+            // 记录metrics
             httpMetricsData.setRespTime(System.currentTimeMillis());
             httpMetricsData.setMetricTime(System.currentTimeMillis());
             MetricsEvent<HttpMetricsData> event = new MetricsEvent<HttpMetricsData>();
