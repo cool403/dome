@@ -41,5 +41,7 @@ public class MethodNames {
     public static final String CONTENT_TYPE_METHOD = "contentType";
     public static final String CODE_METHOD = "code";
     public static final String BUILD_METHOD = "build";
+    public static final String READ_BYTES_ARRAY_METHOD = "readByteArray";
+    public static final String SET_BODY_METHOD = "setBody$okhttp3";
     
 }
