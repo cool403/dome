@@ -1,7 +1,6 @@
 package com.lifelover.dome.core.plugins.okhttp;
 
 import java.lang.reflect.Method;
-import java.text.DateFormat.Field;
 
 import com.lifelover.dome.core.helpers.ClassNames;
 import com.lifelover.dome.core.helpers.MethodNames;
@@ -27,6 +26,9 @@ public class RealCallDelegation {
             httpMetricsDataThreadLocal.remove();
             // 获取请求
             Object originalRequest = ReflectMethods.invokeMethod(callClz, MethodNames.REQUEST_METHOD, call);
+            if (originalRequest == null) {
+                return;
+            }
             Class<?> originalRequestClz = originalRequest.getClass();
 
             // 获取请求头
