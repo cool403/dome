@@ -27,7 +27,6 @@ public class RealCallDelegation {
             httpMetricsDataThreadLocal.remove();
             // 获取请求
             Object originalRequest = ReflectMethods.invokeMethod(callClz, MethodNames.REQUEST_METHOD, call);
-            System.out.println("originalRequest: " + originalRequest);
             if (originalRequest == null) {
                 return;
             }
