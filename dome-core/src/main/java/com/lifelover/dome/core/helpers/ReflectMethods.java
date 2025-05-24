@@ -1,5 +1,6 @@
 package com.lifelover.dome.core.helpers;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map;
@@ -88,5 +89,16 @@ public class ReflectMethods {
      */
     public static <T> T invokeMethod(Class<?> clazz, String methodName, Object obj, Object... args) {
         return invokeMethod(clazz, methodName, null, obj, args);
+    }
+
+    public static void setFieldValue(Object obj, String fieldName, Object value) {
+        try {
+            Field field = obj.getClass().getDeclaredField(fieldName);
+            field.setAccessible(true);
+            field.set(obj, value);
+        } catch (Exception e) {
+            System.err.println("Failed to set field value: " + obj.getClass().getName() + ", " + fieldName);
+            e.printStackTrace();
+        }
     }
 }

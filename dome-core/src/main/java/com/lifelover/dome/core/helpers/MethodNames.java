@@ -39,5 +39,7 @@ public class MethodNames {
     public static final String BYTES_METHOD = "bytes";
     public static final String CREATE_METHOD = "create";
     public static final String CONTENT_TYPE_METHOD = "contentType";
+    public static final String CODE_METHOD = "code";
+    public static final String BUILD_METHOD = "build";
     
 }
