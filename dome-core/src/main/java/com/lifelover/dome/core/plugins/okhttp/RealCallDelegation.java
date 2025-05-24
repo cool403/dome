@@ -17,6 +17,7 @@ public class RealCallDelegation {
 
     public static final ThreadLocal<HttpMetricsData> httpMetricsDataThreadLocal = new ThreadLocal<>();
 
+    //okhttp3.internal.Version.userAgent
     @Advice.OnMethodEnter()
     public static void onMethodEnter(@Advice.This Object call) {
         Class<?> callClz = call.getClass();
