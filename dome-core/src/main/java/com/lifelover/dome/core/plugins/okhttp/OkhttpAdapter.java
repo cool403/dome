@@ -1,6 +1,5 @@
 package com.lifelover.dome.core.plugins.okhttp;
 
-import com.lifelover.dome.core.helpers.TargetAppClassRegistry;
 
 public interface OkhttpAdapter {
     

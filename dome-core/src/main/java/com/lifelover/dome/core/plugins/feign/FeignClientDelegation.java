@@ -2,7 +2,6 @@ package com.lifelover.dome.core.plugins.feign;
 
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 
 import com.lifelover.dome.core.helpers.ClassNames;
