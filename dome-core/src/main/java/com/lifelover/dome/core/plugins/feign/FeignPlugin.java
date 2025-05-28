@@ -1,5 +1,7 @@
 package com.lifelover.dome.core.plugins.feign;
 
+import com.lifelover.dome.core.helpers.ClassNames;
+import com.lifelover.dome.core.helpers.MethodNames;
 import com.lifelover.dome.core.plugins.AbstractBbPlugin;
 import net.bytebuddy.agent.builder.AgentBuilder;
 import net.bytebuddy.description.type.TypeDescription;
@@ -13,7 +15,7 @@ public class FeignPlugin extends AbstractBbPlugin {
         return agentBuilder
                 .type(createTypeMatcher())
                 .transform((builder, typeDescription, classLoader, module) -> builder
-                        .method(ElementMatchers.any())
+                        .method(ElementMatchers.named(MethodNames.EXECUTE_METHOD))
                         .intercept(Advice.to(FeignClientDelegation.class)));
     }
 
@@ -23,8 +25,6 @@ public class FeignPlugin extends AbstractBbPlugin {
     }
 
     private ElementMatcher<? super TypeDescription> createTypeMatcher() {
-        return ElementMatchers.named("feign.Client$Default")
-                .or(ElementMatchers.named("org.springframework.cloud.openfeign.ribbon.LoadBalancerFeignClient"))
-                .or(ElementMatchers.named("org.springframework.cloud.openfeign.FeignClient"));
+        return ElementMatchers.named(ClassNames.FEIGN_CLIENT_CLASS_NAME);
     }
 }

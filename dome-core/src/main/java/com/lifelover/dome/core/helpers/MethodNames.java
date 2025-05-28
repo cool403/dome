@@ -43,5 +43,10 @@ public class MethodNames {
     public static final String BUILD_METHOD = "build";
     public static final String READ_BYTES_ARRAY_METHOD = "readByteArray";
     public static final String SET_BODY_METHOD = "setBody$okhttp3";
+
+
+
+
+    ///////////feign//////////
     
 }
