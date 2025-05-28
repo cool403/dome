@@ -1,7 +1,6 @@
 package com.lifelover.dome.core.plugins.feign;
 
 import com.lifelover.dome.core.plugins.AbstractBbPlugin;
-import com.lifelover.dome.core.plugins.BbPlugin;
 import net.bytebuddy.agent.builder.AgentBuilder;
 import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.matcher.ElementMatcher;
