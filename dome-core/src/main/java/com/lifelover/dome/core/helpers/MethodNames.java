@@ -48,5 +48,5 @@ public class MethodNames {
 
 
     ///////////feign//////////
-    
+    public static final String FEIGN_STATUS_METHOD = "status";
 }
