@@ -51,6 +51,7 @@ public class FeignPlugin extends AbstractBbPlugin {
     private static boolean hasFeignOkHttp(ClassLoader classLoader) {
         try {
             classLoader.loadClass(ClassNames.FEIGN_OKHTTP_CLIENT_CLASS_NAME);
+            System.out.println("加载了feign-okhttp，不会进行feign的http请求拦截");
             return true;
         } catch (ClassNotFoundException e) {
             return false;
