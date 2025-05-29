@@ -26,5 +26,6 @@ public class ClassNames {
     /////////feign////////////
     public static final String FEIGN_CLIENT_CLASS_NAME="feign.Client";
     public static final String FEIGN_RESPONSE_BUILDER_CLASS_NAME = "feign.Response$Builder";
+    public static final String FEIGN_OKHTTP_CLIENT_CLASS_NAME = "feign.okhttp.OkHttpClient";
     
 }
