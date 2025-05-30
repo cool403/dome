@@ -17,9 +17,9 @@ import net.bytebuddy.asm.Advice;
 import net.bytebuddy.implementation.bytecode.assign.Assigner;
 
 public class FeignClientDelegation {
-    private static final ThreadLocal<HttpMetricsData> httpMetricsDataThreadLocal = new ThreadLocal<>();
+    public static final ThreadLocal<HttpMetricsData> httpMetricsDataThreadLocal = new ThreadLocal<>();
 
-    private static volatile Constructor<?> constructor = null;
+    public static volatile Constructor<?> constructor = null;
 
     @Advice.OnMethodEnter()
     public static void onMethodEnter(

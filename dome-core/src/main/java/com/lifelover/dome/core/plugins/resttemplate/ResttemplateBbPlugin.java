@@ -28,7 +28,7 @@ public class ResttemplateBbPlugin extends AbstractBbPlugin {
                     protected Builder<?> build(Builder<?> builder, TypeDescription typeDescription,
                             ClassLoader classLoader,
                             JavaModule module) {
-                        return builder.method(ElementMatchers.named(MethodNames.EXECUTE_METHOD)
+                        return builder.method(ElementMatchers.named(MethodNames.EXECUTE_INTERNAL_METHOD)
                                 .and(ElementMatchers.isDeclaredBy(typeDescription)))
                                 .intercept(Advice.to(RequestClassDelegation.class).wrap(SuperMethodCall.INSTANCE));
                     }
