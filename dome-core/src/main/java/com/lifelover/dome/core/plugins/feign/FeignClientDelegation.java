@@ -46,7 +46,9 @@ public class FeignClientDelegation {
             httpMetricsData.setHttpMethod(httpMethod);
             httpMetricsData.setReqTime(now);
             httpMetricsData.setMetricType("client");
-            httpMetricsData.setRequestBody(new String(reqBytes, StandardCharsets.UTF_8));
+            if(reqBytes != null) {
+                httpMetricsData.setRequestBody(new String(reqBytes, StandardCharsets.UTF_8));
+            }
             httpMetricsDataThreadLocal.set(httpMetricsData);
         } catch (Exception e) {
             e.printStackTrace();
@@ -56,7 +58,7 @@ public class FeignClientDelegation {
 
     @Advice.OnMethodExit(onThrowable = Throwable.class)
     public static void onMethodExit(
-            @Advice.Argument(readOnly = false, value = 0, typing = Assigner.Typing.DYNAMIC) Object response,
+            @Advice.Return(readOnly = false, typing = Assigner.Typing.DYNAMIC) Object response,
             @Advice.Thrown Throwable throwable)
             throws Exception {
         try {

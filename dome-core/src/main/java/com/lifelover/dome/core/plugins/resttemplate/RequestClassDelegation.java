@@ -93,7 +93,9 @@ public class RequestClassDelegation {
             //直接获取 body
             InputStream is = ReflectMethods.invokeMethod(responseClz, MethodNames.GET_BODY_METHOD, response);
             byte[] bodyBytes = StreamUtils.copyToByteArray(is);
-            httpMetricsData.setResponseBody(new String(bodyBytes));
+            if(bodyBytes != null) {
+                httpMetricsData.setResponseBody(new String(bodyBytes));
+            }
             httpMetricsData.setHttpMethod(httpStatus + "");
             MetricsEvent<HttpMetricsData> event = new MetricsEvent<HttpMetricsData>();
             event.setEventData(httpMetricsData);

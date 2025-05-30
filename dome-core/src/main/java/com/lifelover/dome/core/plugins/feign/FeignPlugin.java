@@ -17,7 +17,8 @@ public class FeignPlugin extends AbstractBbPlugin {
     @Override
     protected AgentBuilder wrap(AgentBuilder agentBuilder) {
         return agentBuilder
-                .type(createTypeMatcher())
+                .type(ElementMatchers.hasSuperType(ElementMatchers.named(ClassNames.FEIGN_CLIENT_CLASS_NAME))
+                        .and(ElementMatchers.not(ElementMatchers.isAbstract())))
                 .transform(new BbTransformer() {
 
                     @Override
@@ -39,10 +40,6 @@ public class FeignPlugin extends AbstractBbPlugin {
     @Override
     public String getBpPluginName() {
         return "feign-plugin";
-    }
-
-    private ElementMatcher<? super TypeDescription> createTypeMatcher() {
-        return ElementMatchers.named(ClassNames.FEIGN_CLIENT_CLASS_NAME);
     }
 
     /**
