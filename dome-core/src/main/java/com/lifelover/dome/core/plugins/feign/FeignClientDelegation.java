@@ -90,6 +90,7 @@ public class FeignClientDelegation {
             if (constructor == null) {
                 constructor = builderClz.getConstructor(resClz);
             }
+            constructor.setAccessible(true);
             Object responseBuilder = constructor.newInstance(response);
             // body 塞入字节数组
             responseBuilder = ReflectMethods.invokeMethod(builderClz, MethodNames.BODY_METHOD,
