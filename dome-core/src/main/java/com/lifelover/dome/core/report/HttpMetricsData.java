@@ -12,6 +12,16 @@ public class HttpMetricsData{
     private String requestBody;
     private String responseBody;
 
+    private String metricType;
+
+    public String getMetricType() {
+        return metricType;
+    }
+
+    public void setMetricType(String metricType) {
+        this.metricType = metricType;
+    }
+
     public String getTraceId() {
         return traceId;
     }

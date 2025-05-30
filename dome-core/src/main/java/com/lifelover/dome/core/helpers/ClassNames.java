@@ -27,5 +27,14 @@ public class ClassNames {
     public static final String FEIGN_CLIENT_CLASS_NAME="feign.Client";
     public static final String FEIGN_RESPONSE_BUILDER_CLASS_NAME = "feign.Response$Builder";
     public static final String FEIGN_OKHTTP_CLIENT_CLASS_NAME = "feign.okhttp.OkHttpClient";
+
+
+
+    ////////resttemplate//////
+    public static final String RT_REQUEST_CLASS_NAME="org.springframework.http.client.AbstractBufferingClientHttpRequest";
+    public static final String RT_HTTP_HEADER_CLASS_NAME="org.springframework.http.HttpHeaders";
+    public static final String RT_BUFFER_REQUEST_CLASS_NAME="org.springframework.http.client.BufferingClientHttpRequestWrapper";
+    public static final String RT_BUFFER_RESPONSE_CLASS_NAME="org.springframework.http.client.BufferingClientHttpResponseWrapper";
+    public static final String RT_BASIC_RESPONSE_CLASS_NAME="org.springframework.http.client.ClientHttpResponse";
     
 }

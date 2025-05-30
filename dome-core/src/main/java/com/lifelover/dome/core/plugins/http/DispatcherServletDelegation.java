@@ -117,6 +117,7 @@ public class DispatcherServletDelegation {
                                 metricsData.setReqTime(reqTime);
                                 metricsData.setRequestBody(requestBody);
                                 metricsData.setTraceId(traceId);
+                                metricsData.setMetricType("server");
                                 MetricsEvent<HttpMetricsData> event = new MetricsEvent<HttpMetricsData>();
                                 event.setEventData(metricsData);
                                 EventReporterHolder.getEventReporter().asyncReport(event);
@@ -138,6 +139,7 @@ public class DispatcherServletDelegation {
                         metricsEvent.setRequestBody(requestBody);
                         metricsEvent.setResponseBody(responseBodyStr);
                         metricsEvent.setTraceId(traceId);
+                        metricsEvent.setMetricType("server");
                         MetricsEvent<HttpMetricsData> event = new MetricsEvent<HttpMetricsData>();
                         event.setEventData(metricsEvent);
                         EventReporterHolder.getEventReporter().asyncReport(event);

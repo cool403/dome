@@ -16,6 +16,7 @@ public abstract class AbstractOkHttpAdapter implements OkhttpAdapter {
             if (httpMetricsData == null) {
                 return;
             }
+            httpMetricsData.setMetricType("client");
             httpMetricsDataThreadLocal.set(httpMetricsData);
         } catch (Exception e) {
             e.printStackTrace();
@@ -30,7 +31,7 @@ public abstract class AbstractOkHttpAdapter implements OkhttpAdapter {
             return null;
         }
         if (throwable != null) {
-            httpMetricsData.setHttpStatus("client error");
+            httpMetricsData.setHttpStatus("ERR");
             httpMetricsData.setRespTime(System.currentTimeMillis());
             httpMetricsData.setResponseBody(throwable.getMessage());
             MetricsEvent<HttpMetricsData> event = new MetricsEvent<HttpMetricsData>();

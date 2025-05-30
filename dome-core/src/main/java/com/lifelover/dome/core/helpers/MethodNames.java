@@ -49,4 +49,15 @@ public class MethodNames {
 
     ///////////feign//////////
     public static final String FEIGN_STATUS_METHOD = "status";
+
+
+
+    /////////resttemplate/////
+    public static final String GET_URI_METHOD = "getURI";
+    public static final String GET_METHOD_METHOD = "getMethodValue";
+    public static final String GET_HEADERS_METHOD = "getHeaders";
+    public static final String TO_SINGLE_VALUE_MAP_METHOD = "toSingleValueMap";
+    public static final String EXECUTE_INTERNAL_METHOD = "executeInternal";
+    public static final String GET_RAW_STATUS_METHOD = "getRawStatusCode";
+    public static final String GET_BODY_METHOD = "getBody";
 }

@@ -45,6 +45,7 @@ public class FeignClientDelegation {
             httpMetricsData.setHttpUrl(httpUrl);
             httpMetricsData.setHttpMethod(httpMethod);
             httpMetricsData.setReqTime(now);
+            httpMetricsData.setMetricType("client");
             httpMetricsData.setRequestBody(new String(reqBytes, StandardCharsets.UTF_8));
             httpMetricsDataThreadLocal.set(httpMetricsData);
         } catch (Exception e) {
