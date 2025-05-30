@@ -1,14 +1,11 @@
 package com.lifelover.dome.core.plugins.feign;
 
 import java.io.InputStream;
-import java.lang.reflect.Constructor;
 import java.nio.charset.StandardCharsets;
 
-import com.lifelover.dome.core.helpers.ClassNames;
 import com.lifelover.dome.core.helpers.MethodNames;
 import com.lifelover.dome.core.helpers.ReflectMethods;
 import com.lifelover.dome.core.helpers.StreamUtils;
-import com.lifelover.dome.core.helpers.TargetAppClassRegistry;
 import com.lifelover.dome.core.report.EventReporterHolder;
 import com.lifelover.dome.core.report.HttpMetricsData;
 import com.lifelover.dome.core.report.MetricsEvent;
@@ -18,8 +15,6 @@ import net.bytebuddy.implementation.bytecode.assign.Assigner;
 
 public class FeignClientDelegation {
     public static final ThreadLocal<HttpMetricsData> httpMetricsDataThreadLocal = new ThreadLocal<>();
-
-    public static volatile Constructor<?> constructor = null;
 
     @Advice.OnMethodEnter()
     public static void onMethodEnter(
