@@ -4,8 +4,6 @@ import com.lifelover.dome.core.helpers.ClassNames;
 import com.lifelover.dome.core.helpers.MethodNames;
 import com.lifelover.dome.core.plugins.AbstractBbPlugin;
 import com.lifelover.dome.core.plugins.BbTransformer;
-import com.lifelover.dome.core.plugins.resttemplate.RequestClassDelegation;
-
 import net.bytebuddy.agent.builder.AgentBuilder;
 import net.bytebuddy.asm.Advice;
 import net.bytebuddy.description.type.TypeDescription;
