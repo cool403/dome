@@ -99,13 +99,15 @@ public class FeignClientDelegation {
             event.setEventData(httpMetricsData);
             EventReporterHolder.getEventReporter().asyncReport(event);
         } catch (Exception e) {
+            e.printStackTrace();
             System.out.println("intercept on Feign response error: " + e.getMessage());
         }
     }
 
     public static byte[] readResponseBytes(Object response) throws Exception {
         // 获取inputStream
-        InputStream inputStream = ReflectMethods.invokeMethod(response.getClass(), MethodNames.BODY_METHOD, response);
-        return StreamUtils.copyToByteArray(inputStream);
+        Object body = ReflectMethods.invokeMethod(response.getClass(), MethodNames.BODY_METHOD, response);
+        InputStream is  = ReflectMethods.invokeMethod(body.getClass(), "asInputStream", body);
+        return StreamUtils.copyToByteArray(is);
     }
 }
