@@ -86,16 +86,11 @@ public class FeignClientDelegation {
             // 构造新的 response
             byte[] bodyBytes = readResponseBytes(response);
             // 构造新的 response，流重复读
-            Class<?> builderClz = TargetAppClassRegistry.getClass(ClassNames.FEIGN_RESPONSE_BUILDER_CLASS_NAME);
-            if (constructor == null) {
-                constructor = builderClz.getConstructor(resClz);
-            }
-            constructor.setAccessible(true);
-            Object responseBuilder = constructor.newInstance(response);
+            Object responseBuilder = ReflectMethods.invokeMethod(resClz, "toBuilder", response);
             // body 塞入字节数组
-            responseBuilder = ReflectMethods.invokeMethod(builderClz, MethodNames.BODY_METHOD,
+            responseBuilder = ReflectMethods.invokeMethod(responseBuilder.getClass(), MethodNames.BODY_METHOD,
                     new Class[] { byte[].class }, responseBuilder, bodyBytes);
-            response = ReflectMethods.invokeMethod(builderClz, MethodNames.BUILD_METHOD, responseBuilder);
+            response = ReflectMethods.invokeMethod(responseBuilder.getClass(), MethodNames.BUILD_METHOD, responseBuilder);
             MetricsEvent<HttpMetricsData> event = new MetricsEvent<HttpMetricsData>();
             event.setEventData(httpMetricsData);
             EventReporterHolder.getEventReporter().asyncReport(event);
