@@ -19,6 +19,8 @@ import net.bytebuddy.implementation.bytecode.assign.Assigner;
 public class RequestClassDelegation {
     public static final ThreadLocal<HttpMetricsData> httpMetricsDataThreadLocal = new ThreadLocal<>();
 
+    public static volatile Constructor<?> privateConstructor = null;
+
     @Advice.OnMethodEnter()
     public static void onMethodEnter(@Advice.This Object call,
             @Advice.Argument(value = 0, typing = Assigner.Typing.DYNAMIC) Object httpHeaders,
@@ -85,12 +87,15 @@ public class RequestClassDelegation {
             // 首先判断是否已经被BufferingClientHttpResponseWrapper 包装过
             if(!responseClz.isAssignableFrom(TargetAppClassRegistry.getClass(ClassNames.RT_BUFFER_RESPONSE_CLASS_NAME))) {
                 //转换成 BufferingClientHttpResponseWrapper
-                Constructor<?> initConstructor = TargetAppClassRegistry.getClass(ClassNames.RT_BUFFER_RESPONSE_CLASS_NAME)
-                .getConstructor(TargetAppClassRegistry.getClass(ClassNames.RT_BASIC_RESPONSE_CLASS_NAME));
-                response = initConstructor.newInstance(response);
+                if (privateConstructor == null) {
+                    privateConstructor = TargetAppClassRegistry.getClass(ClassNames.RT_BUFFER_RESPONSE_CLASS_NAME)
+                    .getDeclaredConstructor(TargetAppClassRegistry.getClass(ClassNames.RT_BASIC_RESPONSE_CLASS_NAME));
+                    privateConstructor.setAccessible(true);
+                }
+                response = privateConstructor.newInstance(response);
             }
             //直接获取 body
-            InputStream is = ReflectMethods.invokeMethod(responseClz, MethodNames.GET_BODY_METHOD, response);
+            InputStream is = ReflectMethods.invokeMethod(response.getClass(), MethodNames.GET_BODY_METHOD, response);
             byte[] bodyBytes = StreamUtils.copyToByteArray(is);
             if(bodyBytes != null) {
                 httpMetricsData.setResponseBody(new String(bodyBytes));
