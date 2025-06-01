@@ -83,12 +83,11 @@ public class RequestClassDelegation {
             httpMetricsData.setHttpStatus(httpStatus + "");
             // 获取响应体
             // 首先判断是否已经被BufferingClientHttpResponseWrapper 包装过
-            if(responseClz.isAssignableFrom(TargetAppClassRegistry.getClass(ClassNames.RT_BUFFER_RESPONSE_CLASS_NAME)) == false) {
+            if(!responseClz.isAssignableFrom(TargetAppClassRegistry.getClass(ClassNames.RT_BUFFER_RESPONSE_CLASS_NAME))) {
                 //转换成 BufferingClientHttpResponseWrapper
                 Constructor<?> initConstructor = TargetAppClassRegistry.getClass(ClassNames.RT_BUFFER_RESPONSE_CLASS_NAME)
                 .getConstructor(TargetAppClassRegistry.getClass(ClassNames.RT_BASIC_RESPONSE_CLASS_NAME));
-                Object bufferResponse = initConstructor.newInstance(response);
-                response = bufferResponse;
+                response = initConstructor.newInstance(response);
             }
             //直接获取 body
             InputStream is = ReflectMethods.invokeMethod(responseClz, MethodNames.GET_BODY_METHOD, response);
