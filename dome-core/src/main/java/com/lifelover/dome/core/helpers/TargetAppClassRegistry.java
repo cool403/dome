@@ -29,6 +29,11 @@ public class TargetAppClassRegistry {
             }
             return clazz;
         } catch (Exception e) {
+            //判断是否是ClassNotFoundException
+            if (e instanceof ClassNotFoundException) {
+                targetAppClassMap.put(className, null);
+                return null;
+            }
             e.printStackTrace();
         }
         return null;
