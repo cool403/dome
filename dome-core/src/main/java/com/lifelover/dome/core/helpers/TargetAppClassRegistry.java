@@ -1,5 +1,6 @@
 package com.lifelover.dome.core.helpers;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -7,14 +8,14 @@ public class TargetAppClassRegistry {
     private TargetAppClassRegistry() {
     }
 
-    private static final Map<String, Class<?>> targetAppClassMap = new ConcurrentHashMap<>();
+    private static final Map<String, Class<?>> targetAppClassMap = new HashMap<>();
 
     /**
      * 
      * @param className
      * @return
      */
-    public static Class<?> getClass(String className) {
+    public static synchronized Class<?> getClass(String className) {
         if (targetAppClassMap.containsKey(className)) {
             return targetAppClassMap.get(className);
         }
