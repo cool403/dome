@@ -2,14 +2,14 @@ package com.lifelover.dome.core.plugins.okhttp;
 
 import com.lifelover.dome.core.helpers.TargetAppClassRegistry;
 
-public class OKhttpAdapterHolder {
+public class OkhttpAdapterHolder {
     private static volatile OkhttpAdapter okhttpAdapter;
 
     public static OkhttpAdapter getOkhttpAdapter() {
         if (okhttpAdapter != null) {
             return okhttpAdapter;
         }
-        synchronized (OKhttpAdapterHolder.class) {
+        synchronized (OkhttpAdapterHolder.class) {
             if (okhttpAdapter == null) {
                 // 获取okhttp版本
                 // String okHttpVersion = getOkHttpVersion();

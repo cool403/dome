@@ -8,7 +8,7 @@ public class RealCallDelegation {
     //okhttp3.internal.Version.userAgent
     @Advice.OnMethodEnter()
     public static void onMethodEnter(@Advice.This Object call) {
-        OkhttpAdapter adapter = OKhttpAdapterHolder.getOkhttpAdapter();
+        OkhttpAdapter adapter = OkhttpAdapterHolder.getOkhttpAdapter();
         if (adapter == null) {
             return;
         }
@@ -19,7 +19,7 @@ public class RealCallDelegation {
     public static void onMethodExit(@Advice.This Object call,
             @Advice.Return(readOnly = false, typing = Assigner.Typing.DYNAMIC) Object response,
             @Advice.Thrown Throwable throwable) {
-        OkhttpAdapter adapter = OKhttpAdapterHolder.getOkhttpAdapter();
+        OkhttpAdapter adapter = OkhttpAdapterHolder.getOkhttpAdapter();
         if (adapter == null) {
             return;
         }
