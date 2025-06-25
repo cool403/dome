@@ -21,53 +21,87 @@ import net.bytebuddy.implementation.bytecode.assign.Assigner;
 
 public class DispatcherServletDelegation {
 
-        @Advice.OnMethodEnter()
-        public static void onMethodEnter(
+        /**
+         * 拦截器，返回为true，就不会真实调用，为false就会真实调用，适合mock工具开发
+         * 
+         * @param request
+         * @param response
+         * @return
+         * @throws Exception
+         */
+        @Advice.OnMethodEnter(skipOn = Advice.OnNonDefaultValue.class)
+        public static Object shouldMock(
                         @Advice.Argument(readOnly = false, value = 0, typing = Assigner.Typing.DYNAMIC) Object request,
                         @Advice.Argument(readOnly = false, value = 1, typing = Assigner.Typing.DYNAMIC) Object response)
                         throws Exception {
-                // Check if response is not null and is an instance of HttpServletResponse
-                try {
-                        // 从目标应用加载ContentCachingResponseWrapper类、ContentCachingRequestWrapper类，避免agent依赖
-                        Class<?> responseWrapperClass = TargetAppClassRegistry
-                                        .getClass(ClassNames.CONTENT_CACHING_RESPONSE_WRAPPER_CLASS_NAME);
-                        // Get the ContentCachingRequestWrapper class
-                        Class<?> requestWrapperClass = TargetAppClassRegistry
-                                        .getClass(ClassNames.CONTENT_CACHING_REQUEST_WRAPPER_CLASS_NAME);
-                        if (responseWrapperClass == null || requestWrapperClass == null) {
-                                return;
-                        }
-                        // 分别包装HttpServletRequest和HttpServletResponse
-                        // 这里需要注意，有可能这个时候的request和response已经被包装过了，就不需要重复进行wrapper了
-                        if (!request.getClass().isAssignableFrom(requestWrapperClass)) {
-                                request = requestWrapperClass
-                                                .getConstructor(TargetAppClassRegistry
-                                                                .getClass(ClassNames.HTTP_REQUEST_CLASS_NAME))
-                                                .newInstance(request);
-                        }
-                        if (!response.getClass().isAssignableFrom(responseWrapperClass)) {
-                                response = responseWrapperClass
-                                                .getConstructor(TargetAppClassRegistry
-                                                                .getClass(ClassNames.HTTP_RESPONSE_CLASS_NAME))
-                                                .newInstance(response);
-                        }
-                        // 记录请求时间
-                        long reqTime = System.currentTimeMillis();
-                        ReflectMethods.invokeMethod(request.getClass(), MethodNames.SET_ATTR_METHOD,
-                                        new Class[] { String.class, Object.class }, request, HeaderNames.X_REQUEST_TIME,
-                                        reqTime);
-                } catch (Exception e) {
-                        // Log the error but do not interrupt execution
-                        e.printStackTrace();
-                        System.err.println("Failed to wrap response: " + e.getMessage());
-                }
+                System.out.println("----------------shouldMock----------------");
+                Object writer = ReflectMethods.invokeMethod(response.getClass(), "getWriter", response);
+                // 返回200
+                ReflectMethods.invokeMethod(response.getClass(), "setStatus", new Class[] { int.class }, response, 200);
+                // 写入mock succ!!
+                ReflectMethods.invokeMethod(writer.getClass(), "write", new Class[] { String.class }, writer,
+                                "mock succ!!");
+                // flush
+                ReflectMethods.invokeMethod(writer.getClass(), "flush", writer);
+                System.out.println("----------------shouldMock end----------------");
+                return true;
         }
+
+        // @Advice.OnMethodEnter()
+        // public static void onMethodEnter(
+        // @Advice.Argument(readOnly = false, value = 0, typing =
+        // Assigner.Typing.DYNAMIC) Object request,
+        // @Advice.Argument(readOnly = false, value = 1, typing =
+        // Assigner.Typing.DYNAMIC) Object response)
+        // throws Exception {
+        // // Check if response is not null and is an instance of HttpServletResponse
+        // try {
+        // //
+        // 从目标应用加载ContentCachingResponseWrapper类、ContentCachingRequestWrapper类，避免agent依赖
+        // Class<?> responseWrapperClass = TargetAppClassRegistry
+        // .getClass(ClassNames.CONTENT_CACHING_RESPONSE_WRAPPER_CLASS_NAME);
+        // // Get the ContentCachingRequestWrapper class
+        // Class<?> requestWrapperClass = TargetAppClassRegistry
+        // .getClass(ClassNames.CONTENT_CACHING_REQUEST_WRAPPER_CLASS_NAME);
+        // if (responseWrapperClass == null || requestWrapperClass == null) {
+        // return;
+        // }
+        // // 分别包装HttpServletRequest和HttpServletResponse
+        // // 这里需要注意，有可能这个时候的request和response已经被包装过了，就不需要重复进行wrapper了
+        // if (!request.getClass().isAssignableFrom(requestWrapperClass)) {
+        // request = requestWrapperClass
+        // .getConstructor(TargetAppClassRegistry
+        // .getClass(ClassNames.HTTP_REQUEST_CLASS_NAME))
+        // .newInstance(request);
+        // }
+        // if (!response.getClass().isAssignableFrom(responseWrapperClass)) {
+        // response = responseWrapperClass
+        // .getConstructor(TargetAppClassRegistry
+        // .getClass(ClassNames.HTTP_RESPONSE_CLASS_NAME))
+        // .newInstance(response);
+        // }
+        // // 记录请求时间
+        // long reqTime = System.currentTimeMillis();
+        // ReflectMethods.invokeMethod(request.getClass(), MethodNames.SET_ATTR_METHOD,
+        // new Class[] { String.class, Object.class }, request,
+        // HeaderNames.X_REQUEST_TIME,
+        // reqTime);
+        // } catch (Exception e) {
+        // // Log the error but do not interrupt execution
+        // e.printStackTrace();
+        // System.err.println("Failed to wrap response: " + e.getMessage());
+        // }
+        // }
 
         @Advice.OnMethodExit()
         public static void onMethodExit(
+                        @Advice.Enter Object fixedValue,
                         @Advice.Argument(readOnly = false, value = 0, typing = Assigner.Typing.DYNAMIC) Object request,
                         @Advice.Argument(readOnly = false, value = 1, typing = Assigner.Typing.DYNAMIC) Object response)
                         throws Exception {
+                if (fixedValue != null) {
+                        return;
+                }
                 AgentConfig agentConfig = ConfigLoader.getAgentConfig();
                 String requestBody = null;
                 String responseBodyStr = null;
