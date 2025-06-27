@@ -1,7 +1,5 @@
 package com.lifelover.dome.db;
 
-import java.util.List;
-
 public interface DbAccess {
 
     /**
@@ -13,10 +11,10 @@ public interface DbAccess {
 
     /**
      * 添加api记录
-     * @param lst
+     * @param apiRecords
      * @return
      */
-    long addApiRecords(List<ApiRecords> lst);
+    long addApiRecords(ApiRecords apiRecords);
 
     /**
      * 更新api配置

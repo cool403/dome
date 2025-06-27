@@ -1,6 +1,6 @@
 package com.lifelover.dome.db;
 
-public class MockType {
+public enum MockType {
     /*
      * 重放
      */
@@ -19,5 +19,5 @@ public class MockType {
     /*
      * 代理
      */
-    PROXY
+    PROXY;
 }
