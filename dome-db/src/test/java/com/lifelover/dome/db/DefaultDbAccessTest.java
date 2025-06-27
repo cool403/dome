@@ -12,7 +12,7 @@ public class DefaultDbAccessTest {
     public static void main(String[] args) {
         //测试建表
         String sqlPath = "/home/mawdx/mywork/dome/dome-db/src/main/resources/schema.sql";
-        DbConfig dbConfig = new DbConfig("jdbc:sqlite:/home/mawdx/mywork/dome/dome-db/src/main/resources/dome1.db", sqlPath);
+        DbConfig dbConfig = new DbConfig("jdbc:sqlite:/home/mawdx/mywork/dome/dome-db/src/main/resources/dome.db", sqlPath);
         DefaultDbAccess defaultDbAccess = new DefaultDbAccess(dbConfig);
         ApiConfigs apiConfigs = defaultDbAccess.getApiConfig("/helloworld", "GET");
         System.out.println(apiConfigs);
