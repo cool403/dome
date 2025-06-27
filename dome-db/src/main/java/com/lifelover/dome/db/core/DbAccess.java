@@ -1,4 +1,7 @@
-package com.lifelover.dome.db;
+package com.lifelover.dome.db.core;
+
+import com.lifelover.dome.db.entity.ApiConfigs;
+import com.lifelover.dome.db.entity.ApiRecords;
 
 public interface DbAccess {
 
@@ -7,7 +10,7 @@ public interface DbAccess {
      * @param apiConfigs
      * @return
      */
-    long apiConfig(ApiConfigs apiConfigs);
+    long addApiConfig(ApiConfigs apiConfigs);
 
     /**
      * 添加api记录

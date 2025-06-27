@@ -1,4 +1,4 @@
-package com.lifelover.dome.db;
+package com.lifelover.dome.db.helper;
 
 import java.util.HashSet;
 import java.util.Set;

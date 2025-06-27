@@ -1,4 +1,4 @@
-package com.lifelover.dome.db;
+package com.lifelover.dome.db.entity;
 
 import java.util.Date;
 
@@ -120,5 +120,24 @@ public class ApiRecords {
 
     public void setCreatedAt(Date createdAt) {
         this.createdAt = createdAt;
+    }
+
+    @Override
+    public String toString() {
+        return "ApiRecords{" +
+                "id=" + id +
+                ", httpUrl='" + httpUrl + '\'' +
+                ", httpMethod='" + httpMethod + '\'' +
+                ", queryParams='" + queryParams + '\'' +
+                ", requestBody='" + requestBody + '\'' +
+                ", responseBody='" + responseBody + '\'' +
+                ", traceId='" + traceId + '\'' +
+                ", reqTime=" + reqTime +
+                ", resTime=" + resTime +
+                ", httpStatus='" + httpStatus + '\'' +
+                ", headers='" + headers + '\'' +
+                ", responseHeaders='" + responseHeaders + '\'' +
+                ", createdAt=" + createdAt +
+                '}';
     }
 }

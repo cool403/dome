@@ -1,4 +1,4 @@
-package com.lifelover.dome.db;
+package com.lifelover.dome.db.helper;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -12,7 +12,7 @@ public class SqlHelper {
 
     private static String camelToSnakeCase(String input){
         if (input == null) {
-            return input;
+            return null;
         }
         return input.replaceAll("([a-z])([A-Z])", "$1_$2").toLowerCase();
     }
@@ -40,8 +40,8 @@ public class SqlHelper {
             if (!TypeChecker.isMappableToSqlType(fieldType)) {
                 continue;
             }
-            prefixSb = prefixSb.append(camelToSnakeCase(fieldName)).append(",");
-            suffixSb = suffixSb.append(":").append(fieldName).append(",");
+            prefixSb.append(camelToSnakeCase(fieldName)).append(",");
+            suffixSb.append(":").append(fieldName).append(",");
         }
         return prefixSb.append(") values").append(suffixSb).append(")").toString().replace(",)", ")");
     }
@@ -71,9 +71,9 @@ public class SqlHelper {
                 if (fieldValue == null && !forcedColumns.contains(fieldName)) {
                     continue;
                 }
-                sqlSb = sqlSb.append(camelToSnakeCase(fieldName)).append("=").append(":").append(fieldName).append(",");
+                sqlSb.append(camelToSnakeCase(fieldName)).append("=").append(":").append(fieldName).append(",");
             }
-            sqlSb = sqlSb.append("where").append(camelToSnakeCase(primaryKey)).append("=").append(primaryKeValue);
+            sqlSb.append("where").append(camelToSnakeCase(primaryKey)).append("=").append(primaryKeValue);
             return sqlSb.toString().replace(",where", " where ");
         } catch (Exception e) {
             throw new RuntimeException("生成更新sql出错!", e);

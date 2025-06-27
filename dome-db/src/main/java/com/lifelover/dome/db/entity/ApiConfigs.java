@@ -1,4 +1,5 @@
-package com.lifelover.dome.db;
+package com.lifelover.dome.db.entity;
+
 
 import java.util.Date;
 
@@ -13,6 +14,7 @@ public class ApiConfigs {
     private String replayRecordId;
     private String delay;
     private String description;
+
     private Date createdAt;
     private Date updatedAt;
 
@@ -120,5 +122,24 @@ public class ApiConfigs {
 
     public void setUpdatedAt(Date updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    @Override
+    public String toString() {
+        return "ApiConfigs{" +
+                "id=" + id +
+                ", httpUrl='" + httpUrl + '\'' +
+                ", httpMethod='" + httpMethod + '\'' +
+                ", isMockEnabled='" + isMockEnabled + '\'' +
+                ", mockType='" + mockType + '\'' +
+                ", staticResponse='" + staticResponse + '\'' +
+                ", dynamicRule='" + dynamicRule + '\'' +
+                ", replayRecordId='" + replayRecordId + '\'' +
+                ", delay='" + delay + '\'' +
+                ", description='" + description + '\'' +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                ", replayApiRecords=" + replayApiRecords +
+                '}';
     }
 }

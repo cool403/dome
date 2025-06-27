@@ -1,4 +1,4 @@
-package com.lifelover.dome.db;
+package com.lifelover.dome.db.helper;
 
 public enum MockType {
     /*

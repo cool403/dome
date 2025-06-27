@@ -1,6 +1,12 @@
-package com.lifelover.dome.db;
+package com.lifelover.dome.db.core;
 
+import com.lifelover.dome.db.helper.MockType;
+import com.lifelover.dome.db.helper.SqlHelper;
+import com.lifelover.dome.db.entity.ApiConfigs;
+import com.lifelover.dome.db.entity.ApiRecords;
 import org.jdbi.v3.core.Jdbi;
+
+import java.util.Optional;
 
 public class DefaultDbAccess implements DbAccess {
     private final Jdbi jdbi;
@@ -10,7 +16,7 @@ public class DefaultDbAccess implements DbAccess {
     }
 
     @Override
-    public long apiConfig(ApiConfigs apiConfigs) {
+    public long addApiConfig(ApiConfigs apiConfigs) {
         if (apiConfigs == null) {
             return 0;
         }
@@ -55,26 +61,24 @@ public class DefaultDbAccess implements DbAccess {
         }
         return jdbi.withHandle(handle -> {
             // 首先通过唯一组合键值获取ApiConfig
-            final ApiConfigs apiConfigs = handle
+            Optional<ApiConfigs> apiConfigsOptional = handle
                     .createQuery("select * from api_configs where http_url = :httpUrl and http_method= :httpMethod")
-                    .bind(httpMethod, httpMethod)
-                    .bind(httpUrl, httpUrl)
+                    .bind("httpMethod", httpMethod)
+                    .bind("httpUrl", httpUrl)
                     .mapToBean(ApiConfigs.class)
-                    .one();
-            if (apiConfigs == null) {
-                return apiConfigs;
-            }
-            final String mockType = apiConfigs.getMockType();
-            // 然后通过类型判断是否需要关联获取重放流量信息
-            if (MockType.REPLAY.name().equals(mockType)) {
-                final String replayRecordId = apiConfigs.getReplayRecordId();
-                final ApiRecords apiRecords = handle.createQuery("select * from api_records where id = :id")
-                        .bind("id", replayRecordId)
-                        .mapToBean(ApiRecords.class)
-                        .one();
-                apiConfigs.setReplayApiRecords(apiRecords);
-            }
-            return apiConfigs;
+                    .findOne();
+            apiConfigsOptional.ifPresent(it -> {
+                final String mockType = it.getMockType();
+                // 然后通过类型判断是否需要关联获取重放流量信息
+                if (MockType.REPLAY.name().equals(mockType)) {
+                    final String replayRecordId = it.getReplayRecordId();
+                    handle.createQuery("select * from api_records where id = :id")
+                            .bind("id", replayRecordId)
+                            .mapToBean(ApiRecords.class)
+                            .findOne().ifPresent(it::setReplayApiRecords);
+                }
+            });
+            return apiConfigsOptional.orElse(null);
         });
 
     }
