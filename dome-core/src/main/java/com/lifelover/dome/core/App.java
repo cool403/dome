@@ -21,7 +21,7 @@ public class App {
     public static void premain(String args, Instrumentation inst){
         System.out.println("[dome agent] start to premain");
         //初始化
-        Initializr.init(args);
+        Initializer.init(args);
         //获取加载好的插件列表
         List<BbPlugin> plugins = PluginLoader.getPluginLst();
         if (plugins == null) {

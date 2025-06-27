@@ -6,9 +6,9 @@ import java.util.List;
 public class AgentConfig {
     private String collectorUrl;
 
-    private List<String> ignoreUrls = new ArrayList<>();
+    private final List<String> ignoreUrls = new ArrayList<>();
 
-    private List<String> supportMethods = new ArrayList<>();
+    private final List<String> supportMethods = new ArrayList<>();
 
     private String reporterType = "HTTP";
 
@@ -51,6 +51,10 @@ public class AgentConfig {
 
     public List<String> getSupportMethods() {
         return supportMethods;
+    }
+
+    public void addIgnoreUrls(List<String> ignoreUrls){
+        this.getIgnoreUrls().addAll(ignoreUrls);
     }
 
     

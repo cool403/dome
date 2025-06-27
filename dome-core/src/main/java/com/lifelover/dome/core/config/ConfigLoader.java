@@ -25,7 +25,7 @@ public class ConfigLoader {
             agentConfig.setCollectorUrl(collectorAddr);
             //获取reporterType
             String reporterType = getEnvValue(paramMap, EnvNames.ENV_REPORTER);
-            if (reporterType != null && reporterType != "") {
+            if (reporterType != null && !reporterType.isEmpty()) {
                 agentConfig.setReporterType(reporterType);
             }
         }

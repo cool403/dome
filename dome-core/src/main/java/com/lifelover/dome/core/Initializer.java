@@ -6,8 +6,8 @@ import java.util.Map;
 import com.lifelover.dome.core.config.ConfigLoader;
 import com.lifelover.dome.core.plugins.PluginLoader;
 
-public class Initializr {
-    private Initializr() {
+public class Initializer {
+    private Initializer() {
 
     }
 
@@ -35,7 +35,7 @@ public class Initializr {
      * @return
      */
     public static Map<String, String> toEnvMap(String args) {
-        if (args == null || args.equals("")) {
+        if (args == null || args.isEmpty()) {
             return new HashMap<>();
         }
         final Map<String, String> paramMap = new HashMap<>(16);
