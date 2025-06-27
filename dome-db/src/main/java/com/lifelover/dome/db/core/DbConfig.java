@@ -1,6 +1,11 @@
 package com.lifelover.dome.db.core;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 
 import com.lifelover.dome.db.ext.DateArgumentFactory;
 import com.lifelover.dome.db.ext.DateColumnMapper;
@@ -29,15 +34,24 @@ public class DbConfig {
         return jdbi;
     }
 
-    public void init(String sqlPath){
-        InputStream is = this.getClass().getResourceAsStream(sqlPath);
-        if (is == null) {
-            throw new RuntimeException("无法找到sql文件");
-        }
+    public void init(){
         try {
+            InputStream is = Files.newInputStream(new File(this.sqlPath).toPath());
+            StringBuilder out = new StringBuilder(4096);
+            InputStreamReader reader = new InputStreamReader(is, StandardCharsets.UTF_8);
+            char[] buffer = new char[4096];
+            int charsRead;
+            while ((charsRead = reader.read(buffer)) != -1) {
+                out.append(buffer, 0, charsRead);
+            }
+            final String sqlScript = out.toString();
+            jdbi.useHandle(handle -> {
+                // 自动分割并执行每条SQL语句
+                handle.createScript(sqlScript).executeAsSeparateStatements();
+            });
+            System.out.println("初始化建表成功.");
         } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            throw new RuntimeException("初始化建表失败.",e);
         }
     }
 }
