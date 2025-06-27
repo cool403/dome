@@ -1,5 +1,5 @@
 -- 请求记录表（存储每笔实际请求信息）
-CREATE TABLE api_records (
+CREATE TABLE if not exists api_records (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     http_url TEXT NOT NULL,
     http_method TEXT NOT NULL CHECK (http_method IN ('GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS')),
@@ -17,7 +17,7 @@ CREATE TABLE api_records (
 
 
 -- 接口配置表（定义每个接口的mock行为）
-CREATE TABLE api_configs (
+CREATE TABLE if not exists api_configs (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     http_url TEXT NOT NULL,
     http_method TEXT NOT NULL CHECK (http_method IN ('GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS')),
