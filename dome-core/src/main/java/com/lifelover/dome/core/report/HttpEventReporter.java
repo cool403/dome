@@ -5,6 +5,7 @@ import java.io.IOException;
 import com.lifelover.dome.core.config.ConfigLoader;
 import com.lifelover.dome.core.helpers.JsonUtil;
 
+@SuppressWarnings("rawtypes")
 public class HttpEventReporter extends AbstractEventReporter{
 
     private static final int REQUEST_TIMEOUT_MS = 150;
@@ -22,8 +23,7 @@ public class HttpEventReporter extends AbstractEventReporter{
         try {
             HttpUtil.post(reportUrl, JsonUtil.toJson(metricsEvent), REQUEST_TIMEOUT_MS);
         } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 
