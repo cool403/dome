@@ -11,13 +11,13 @@ public class DbEventReporter extends AbstractEventReporter {
     @Override
     protected void handle(MetricsEvent metricsEvent) {
         //只保存http事件
-        if (metricsEvent == null || !"HTTP".equals(metricsEvent.getEventType())) {
+        if (metricsEvent == null || !ReportType.HTTP.name().equals(metricsEvent.getEventType())) {
             return;
         }
         HttpMetricsData httpMetricsData =(HttpMetricsData) metricsEvent.getEventData();
         DbAccess dbAccess = ConfigLoader.getAgentConfig().getDbAccess();
         if (dbAccess == null) {
-            System.err.println("dbAccess is null");
+            System.err.println("[dome agent] dbAccess is null");
             return;
         }
         ApiRecords apiRecords = assembleApiRecords(httpMetricsData);

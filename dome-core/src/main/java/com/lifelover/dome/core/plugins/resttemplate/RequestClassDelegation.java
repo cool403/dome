@@ -51,8 +51,8 @@ public class RequestClassDelegation {
             httpMetricsData.setHttpMethod(httpMethod);
             httpMetricsDataThreadLocal.set(httpMetricsData);
         } catch (Exception e) {
+            System.err.println("[dome agent] Failed to wrap Resttemplate request: " + e.getMessage());
             e.printStackTrace();
-            System.err.println("Failed to wrap Resttemplate request: " + e.getMessage());
         }
 
     }
@@ -106,8 +106,8 @@ public class RequestClassDelegation {
             EventReporterHolder.getEventReporter().asyncReport(event); 
             httpMetricsDataThreadLocal.remove();
         } catch (Exception e) {
+            System.err.println("[dome agent] Failed to wrap Resttemplate request: " + e.getMessage());
             e.printStackTrace();
-            System.err.println("Failed to wrap Resttemplate request: " + e.getMessage());
         }
     }
 }

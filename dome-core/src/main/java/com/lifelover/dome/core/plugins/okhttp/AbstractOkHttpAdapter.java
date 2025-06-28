@@ -19,8 +19,8 @@ public abstract class AbstractOkHttpAdapter implements OkhttpAdapter {
             httpMetricsData.setMetricType("client");
             httpMetricsDataThreadLocal.set(httpMetricsData);
         } catch (Exception e) {
+            System.err.println("[dome agent] Failed to process request: " + e.getMessage());
             e.printStackTrace();
-            System.err.println("Failed to process request: " + e.getMessage());
         }
     }
 
@@ -50,8 +50,8 @@ public abstract class AbstractOkHttpAdapter implements OkhttpAdapter {
             EventReporterHolder.getEventReporter().asyncReport(event);
             return newResponse;
         } catch (Exception e) {
+            System.err.println("[dome agent] Failed to process response: " + e.getMessage());
             e.printStackTrace();
-            System.err.println("Failed to process response: " + e.getMessage());
         }
         return null;
     }

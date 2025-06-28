@@ -64,7 +64,7 @@ public class DispatcherServletDelegation {
                     return null;
                 }
             }
-            if (agentConfig.getSupportMethods().contains(httpMethod)) {
+            if (!agentConfig.getSupportMethods().contains(httpMethod)) {
                 return null;
             }
             //判断是否需要mock
@@ -109,8 +109,8 @@ public class DispatcherServletDelegation {
             httpMetricsDataThreadLocal.set(httpMetricsData);
         } catch (Exception e) {
             // Log the error but do not interrupt execution
+            System.err.println("[dome agent] Failed to wrap response: " + e.getMessage());
             e.printStackTrace();
-            System.err.println("Failed to wrap response: " + e.getMessage());
         }
         return null;
     }
@@ -137,21 +137,20 @@ public class DispatcherServletDelegation {
         // 先这样写，后续根据不同应用的赋值方式区
         String traceId = UUID.randomUUID().toString();
         try {
-            int httpStatus = ReflectMethods.invokeMethod(responseClass, MethodNames.GET_STATUS_METHOD,
-                    response);
+            int httpStatus = ReflectMethods.invokeMethod(responseClass, MethodNames.GET_STATUS_METHOD, response);
             // 获取queryString
-            String queryStringParams = ReflectMethods.invokeMethod(requestClass,
-                    MethodNames.GET_QUERY_STRING_METHOD, request);
+            metricsData.setHttpStatus(httpStatus + "");
+            metricsData.setMetricType("server");
+            metricsData.setTraceId(traceId);
+            metricsData.setRespTime(System.currentTimeMillis());
+            String queryStringParams = ReflectMethods.invokeMethod(requestClass, MethodNames.GET_QUERY_STRING_METHOD, request);
+            metricsData.setQueryParams(queryStringParams);
             if (httpStatus >= 400) {
                 // System.out.println("request uri: " + requestUri + ", http status:" +
                 // httpStatus);
                 // 状态码不对的也需要记录输入内容
                 requestBody = getRequestBody(request, metricsData.getHttpMethod());
-                metricsData.setHttpStatus(httpStatus + "");
-                metricsData.setQueryParams(queryStringParams);
                 metricsData.setRequestBody(requestBody);
-                metricsData.setTraceId(traceId);
-                metricsData.setMetricType("server");
                 MetricsEvent<HttpMetricsData> event = new MetricsEvent<HttpMetricsData>();
                 event.setEventData(metricsData);
                 EventReporterHolder.getEventReporter().asyncReport(event);
@@ -160,12 +159,8 @@ public class DispatcherServletDelegation {
             // 上传请求200 情况 下不做特殊处理
             responseBodyStr = getResponseBody(response);
             requestBody = getRequestBody(request, metricsData.getHttpMethod());
-            metricsData.setHttpStatus(httpStatus + "");
-            metricsData.setQueryParams(queryStringParams);
             metricsData.setRequestBody(requestBody);
             metricsData.setResponseBody(responseBodyStr);
-            metricsData.setTraceId(traceId);
-            metricsData.setMetricType("server");
             MetricsEvent<HttpMetricsData> event = new MetricsEvent<>();
             event.setEventData(metricsData);
             EventReporterHolder.getEventReporter().asyncReport(event);

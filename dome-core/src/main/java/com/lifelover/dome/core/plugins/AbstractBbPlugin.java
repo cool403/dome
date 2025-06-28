@@ -11,7 +11,7 @@ public abstract class AbstractBbPlugin implements BbPlugin {
         agentBuilder = agentBuilder.with(new AgentBuilder.Listener.Adapter() {
             @Override
             public void onError(String typeName, ClassLoader loader, JavaModule module, boolean loaded, Throwable throwable) {
-                System.err.println("[" + getBpPluginName() + "]" + " ERROR on: " + typeName);
+                System.err.println("[dome agent] [" + getBpPluginName() + "]" + " ERROR on: " + typeName);
                 throwable.printStackTrace();
             }
         });

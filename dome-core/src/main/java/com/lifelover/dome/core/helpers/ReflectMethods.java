@@ -34,7 +34,7 @@ public class ReflectMethods {
             methodCache.put(key, method);
             return method;
         } catch (Exception e) {
-            System.err.println("Failed to get method: " + clazz.getName() + ", " + methodName);
+            System.err.println("[dome agent] Failed to get method: " + clazz.getName() + ", " + methodName);
             e.printStackTrace();
         }
         return null;
@@ -59,8 +59,8 @@ public class ReflectMethods {
             }
             return (T) result;
         } catch (Exception ex) {
+            System.err.println("[dome agent] invoke method=" + method.getName() + " error:" + ex.getStackTrace());
             ex.printStackTrace();
-            System.err.println("invoke method=" + method.getName() + " error:" + ex.getStackTrace());
         }
         return null;
     }
@@ -99,7 +99,7 @@ public class ReflectMethods {
             field.setAccessible(true);
             field.set(obj, value);
         } catch (Exception e) {
-            System.err.println("Failed to set field value: " + obj.getClass().getName() + ", " + fieldName);
+            System.err.println("[dome agent] Failed to set field value: " + obj.getClass().getName() + ", " + fieldName);
             e.printStackTrace();
         }
     }

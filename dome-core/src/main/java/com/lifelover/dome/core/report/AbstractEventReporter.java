@@ -3,6 +3,7 @@ package com.lifelover.dome.core.report;
 import java.util.ArrayList;
 import java.util.List;
 
+@SuppressWarnings("rawtypes")
 public abstract class AbstractEventReporter implements EventReporter {
 
     // private static final int THREAD_POOL_SIZE = 5;
@@ -43,7 +44,8 @@ public abstract class AbstractEventReporter implements EventReporter {
                     handle(event);
                 } catch (Exception e) {
                     // 可以添加日志记录错误
-                    System.err.println("事件上报失败: " + e.getMessage());
+                    System.err.println("[dome agent] 事件上报失败: " + e.getMessage());
+                    e.printStackTrace();
                 }
             });
         }

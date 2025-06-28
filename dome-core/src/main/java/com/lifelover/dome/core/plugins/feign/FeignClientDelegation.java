@@ -46,8 +46,8 @@ public class FeignClientDelegation {
             }
             httpMetricsDataThreadLocal.set(httpMetricsData);
         } catch (Exception e) {
+            System.err.println("[dome agent] Failed to wrap Feign request: " + e.getMessage());
             e.printStackTrace();
-            System.err.println("Failed to wrap Feign request: " + e.getMessage());
         }
     }
 

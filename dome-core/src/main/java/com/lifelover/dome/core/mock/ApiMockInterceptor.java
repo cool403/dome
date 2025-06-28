@@ -20,7 +20,7 @@ public class ApiMockInterceptor {
         //只有contentype是json的才进行mock
         String contentType = apiMockContext.getContentType();
         if (contentType != null && !contentType.toLowerCase().contains("json")) {
-            System.err.println("目前只有contentType是application/Json才支持mock");
+            System.err.println("[dome agent] 目前只有contentType是application/Json才支持mock");
             return null;
         }
         //根据httpUrl 和httpMethod获取api信息

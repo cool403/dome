@@ -2,6 +2,7 @@ package com.lifelover.dome.core.report;
 
 import java.util.List;
 
+@SuppressWarnings("rawtypes")
 public interface EventReporter {
     
     /**

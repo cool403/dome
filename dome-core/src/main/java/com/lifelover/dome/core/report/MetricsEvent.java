@@ -7,7 +7,7 @@ public class MetricsEvent<T> {
     private String eventId = UUID.randomUUID().toString();
 
 
-    private String eventType = "http";
+    private String eventType = ReportType.HTTP.name();
 
 
     private T eventData;
