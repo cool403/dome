@@ -4,6 +4,7 @@ import com.lifelover.dome.db.core.DbAccess;
 import com.lifelover.dome.db.core.DbConfig;
 import com.lifelover.dome.db.core.DefaultDbAccess;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
