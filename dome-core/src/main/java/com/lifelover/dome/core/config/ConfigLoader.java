@@ -28,6 +28,8 @@ public class ConfigLoader {
             if (reporterType != null && !reporterType.isEmpty()) {
                 agentConfig.setReporterType(reporterType);
             }
+            //初始化数据源
+            agentConfig.initDbAccess(paramMap);
         }
     }
 

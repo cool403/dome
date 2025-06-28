@@ -1,7 +1,12 @@
 package com.lifelover.dome.core.config;
 
+import com.lifelover.dome.db.core.DbAccess;
+import com.lifelover.dome.db.core.DbConfig;
+import com.lifelover.dome.db.core.DefaultDbAccess;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class AgentConfig {
     private String collectorUrl;
@@ -12,8 +17,10 @@ public class AgentConfig {
 
     private String reporterType = "HTTP";
 
-    public AgentConfig(){
-        //先简单支持后缀匹配,后续支持antUrlMatch
+    private DbAccess dbAccess = null;
+
+    public AgentConfig() {
+        // 先简单支持后缀匹配,后续支持antUrlMatch
         ignoreUrls.add("/error");
         ignoreUrls.add("/swagger-ui");
         ignoreUrls.add("/actuator/telemetry");
@@ -23,19 +30,13 @@ public class AgentConfig {
         supportMethods.add("DELETE");
     }
 
-    
-
     public String getReporterType() {
         return reporterType;
     }
 
-
-
     public void setReporterType(String reporterType) {
         this.reporterType = reporterType;
     }
-
-
 
     public String getCollectorUrl() {
         return collectorUrl;
@@ -53,9 +54,25 @@ public class AgentConfig {
         return supportMethods;
     }
 
-    public void addIgnoreUrls(List<String> ignoreUrls){
+    public void addIgnoreUrls(List<String> ignoreUrls) {
         this.getIgnoreUrls().addAll(ignoreUrls);
     }
 
-    
+    public void initDbAccess(Map<String, String> paramMap) {
+        if (paramMap == null) {
+            return;
+        }
+        final String jdbcUrl = paramMap.get("jdbcUrl");
+        if (jdbcUrl == null) {
+            return;
+        }
+        final DbConfig dbConfig = new DbConfig(jdbcUrl);
+        //初始化数据表
+        dbConfig.init();
+        this.dbAccess = new DefaultDbAccess(dbConfig);
+    }
+
+    public DbAccess getDbAccess() {
+        return dbAccess;
+    }
 }

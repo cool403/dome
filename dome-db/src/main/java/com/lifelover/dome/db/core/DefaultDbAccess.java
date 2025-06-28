@@ -6,6 +6,7 @@ import com.lifelover.dome.db.entity.ApiConfigs;
 import com.lifelover.dome.db.entity.ApiRecords;
 import org.jdbi.v3.core.Jdbi;
 
+import java.util.Date;
 import java.util.Optional;
 
 public class DefaultDbAccess implements DbAccess {
@@ -33,10 +34,24 @@ public class DefaultDbAccess implements DbAccess {
         if (apiRecords == null) {
             return 0;
         }
+        final Date now = new Date();
         jdbi.useHandle(handle -> {
             handle.createUpdate(SqlHelper.insertSql(ApiRecords.class, "id"))
                     .bindBean(apiRecords)
                     .execute();
+            ApiConfigs apiConfigs = getApiConfig(apiRecords.getHttpUrl(), apiRecords.getHttpMethod());
+            //不存在则创建
+            if (apiConfigs == null) {
+                apiConfigs = new ApiConfigs();
+                apiConfigs.setHttpUrl(apiRecords.getHttpUrl());
+                apiConfigs.setHttpMethod(apiRecords.getHttpMethod());
+                apiConfigs.setMockType(MockType.REPLAY.name());
+                //默认不开启回放
+                apiConfigs.setIsMockEnabled("0");
+                apiConfigs.setCreatedAt(now);
+                apiConfigs.setUpdatedAt(now);
+                addApiConfig(apiConfigs);
+            }
         });
         return 1;
     }
