@@ -31,7 +31,7 @@ public class Okhttp4Adapter extends AbstractOkHttpAdapter {
                 .toString();
         HttpMetricsData httpMetricsData = new HttpMetricsData();
         // post 记录请求体
-        if (null != method && "POST".equals(method)) {
+        if ("POST".equals(method)) {
             Object requestBody = ReflectMethods.invokeMethod(originalRequestClz, MethodNames.BODY_METHOD,
                     originalRequest);
             Class<?> bufferSinkClz = TargetAppClassRegistry.getClass(ClassNames.OKIO_BUFFERED_SINK_CLASS_NAME);
@@ -105,9 +105,7 @@ public class Okhttp4Adapter extends AbstractOkHttpAdapter {
         newResponseBuilder = ReflectMethods.invokeMethod(newResponseBuilderClz, MethodNames.BODY_METHOD,
                 new Class[] { responseBodyClz.getSuperclass() }, newResponseBuilder, newResponseBody);
         // 创建新的Response
-        Object newResponse = ReflectMethods.invokeMethod(newResponseBuilderClz, MethodNames.BUILD_METHOD,
-                newResponseBuilder);
-        return newResponse;
+        return ReflectMethods.invokeMethod(newResponseBuilderClz, MethodNames.BUILD_METHOD, newResponseBuilder);
     }
 
 }

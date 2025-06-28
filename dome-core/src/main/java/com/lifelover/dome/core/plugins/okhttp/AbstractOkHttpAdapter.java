@@ -5,7 +5,7 @@ import com.lifelover.dome.core.report.HttpMetricsData;
 import com.lifelover.dome.core.report.MetricsEvent;
 
 public abstract class AbstractOkHttpAdapter implements OkhttpAdapter {
-    private static ThreadLocal<HttpMetricsData> httpMetricsDataThreadLocal = new ThreadLocal<>();
+    private static final ThreadLocal<HttpMetricsData> httpMetricsDataThreadLocal = new ThreadLocal<>();
 
     @Override
     public void beforeCall(Object call) {
