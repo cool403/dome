@@ -14,7 +14,7 @@ public class OkhttpAdapterHolder {
                 // 获取okhttp版本
                 // String okHttpVersion = getOkHttpVersion();
                 String okHttpVersion = "4.x";
-                System.out.println("okHttpVersion: " + okHttpVersion);
+                System.out.println("[dome agent] okHttpVersion: " + okHttpVersion);
                 // 默认是4.x
                 okhttpAdapter = new Okhttp4Adapter();
             }

@@ -7,91 +7,113 @@ import java.util.UUID;
 import com.lifelover.dome.core.config.AgentConfig;
 import com.lifelover.dome.core.config.ConfigLoader;
 import com.lifelover.dome.core.helpers.ClassNames;
-import com.lifelover.dome.core.helpers.HeaderNames;
 import com.lifelover.dome.core.helpers.MethodNames;
 import com.lifelover.dome.core.helpers.ReflectMethods;
 import com.lifelover.dome.core.helpers.StreamUtils;
 import com.lifelover.dome.core.helpers.TargetAppClassRegistry;
+import com.lifelover.dome.core.mock.ApiMockContext;
+import com.lifelover.dome.core.mock.ApiMockInterceptor;
 import com.lifelover.dome.core.report.EventReporterHolder;
 import com.lifelover.dome.core.report.HttpMetricsData;
 import com.lifelover.dome.core.report.MetricsEvent;
 
+import com.lifelover.dome.db.entity.ApiRecords;
 import net.bytebuddy.asm.Advice;
 import net.bytebuddy.implementation.bytecode.assign.Assigner;
 
 public class DispatcherServletDelegation {
 
+    public static final ThreadLocal<HttpMetricsData> httpMetricsDataThreadLocal = new ThreadLocal<>();
+
+
     /**
      * 拦截器，返回为true，就不会真实调用，为false就会真实调用，适合mock工具开发
-     *
      * @param request
      * @param response
      * @return
      * @throws Exception
      */
     @Advice.OnMethodEnter(skipOn = Advice.OnNonDefaultValue.class)
-    public static Object shouldMock(
+    public static Object onMethodEnter(
             @Advice.Argument(readOnly = false, value = 0, typing = Assigner.Typing.DYNAMIC) Object request,
             @Advice.Argument(readOnly = false, value = 1, typing = Assigner.Typing.DYNAMIC) Object response)
             throws Exception {
-        System.out.println("----------------shouldMock----------------");
-        Object writer = ReflectMethods.invokeMethod(response.getClass(), "getWriter", response);
-        // 返回200
-        ReflectMethods.invokeMethod(response.getClass(), "setStatus", new Class[]{int.class}, response, 200);
-        // 写入mock succ!!
-        ReflectMethods.invokeMethod(writer.getClass(), "write", new Class[]{String.class}, writer,
-                "mock succ!!");
-        // flush
-        ReflectMethods.invokeMethod(writer.getClass(), "flush", writer);
-        System.out.println("----------------shouldMock end----------------");
-        return true;
-    }
+        // Check if response is not null and is an instance of HttpServletResponse
+        try {
+            // 清除threadLocal
+            httpMetricsDataThreadLocal.remove();
+            Class<?> requestClass = request.getClass();
+            // 从目标应用加载ContentCachingResponseWrapper类、ContentCachingRequestWrapper类，避免agent依赖
+            Class<?> responseWrapperClass = TargetAppClassRegistry.getClass(ClassNames.CONTENT_CACHING_RESPONSE_WRAPPER_CLASS_NAME);
+            // Get the ContentCachingRequestWrapper class
+            Class<?> requestWrapperClass = TargetAppClassRegistry.getClass(ClassNames.CONTENT_CACHING_REQUEST_WRAPPER_CLASS_NAME);
+            if (responseWrapperClass == null || requestWrapperClass == null) {
+                return null;
+            }
+            String contentType = ReflectMethods.invokeMethod(requestClass, MethodNames.GET_CONTENT_TYPE_METHOD, request);
+            String httpMethod = ReflectMethods.invokeMethod(requestClass, MethodNames.GET_METHOD, request);
+            // 部分情况下contentType可能为空
+            if (contentType != null && contentType.startsWith("multipart/")) {
+                return null;
+            }
+            // 获取请求路径
+            String requestUri = ReflectMethods.invokeMethod(requestClass, MethodNames.GET_REQUEST_URI_METHOD, request);
+            AgentConfig agentConfig = ConfigLoader.getAgentConfig();
+            for (String ignoreUrl : agentConfig.getIgnoreUrls()) {
+                if (requestUri.contains(ignoreUrl)) {
+                    return null;
+                }
+            }
+            if (agentConfig.getSupportMethods().contains(httpMethod)) {
+                return null;
+            }
+            //判断是否需要mock
+            ApiMockContext apiMockContext = new ApiMockContext();
+            apiMockContext.setContentType(contentType);
+            apiMockContext.setHttpMethod(httpMethod);
+            apiMockContext.setHttpUrl(requestUri);
+            ApiRecords apiRecords = ApiMockInterceptor.mock(apiMockContext);
+            //只考虑返回也是json
+            if (apiRecords != null) {
+                System.out.println("[dome agent] http_url="+requestUri+",http_method="+httpMethod+"命中mock,直接返回mock数据");
+                Object writer = ReflectMethods.invokeMethod(response.getClass(), "getWriter", response);
+                // 返回200
+                ReflectMethods.invokeMethod(response.getClass(),"setContentType", new Class[]{String.class}, response,"application/json");
+                ReflectMethods.invokeMethod(response.getClass(), "setStatus", new Class[] { int.class }, response, 200);
+                // 写入mock succ!!
+                ReflectMethods.invokeMethod(writer.getClass(), "write", new Class[] { String.class }, writer,
+                        apiRecords.getResponseBody());
+                // flush
+                ReflectMethods.invokeMethod(writer.getClass(), "flush", writer);
+                return true;
+            }
+            // 分别包装HttpServletRequest和HttpServletResponse
+            // 这里需要注意，有可能这个时候的request和response已经被包装过了，就不需要重复进行wrapper了
+            if (!requestClass.isAssignableFrom(requestWrapperClass)) {
+                request = requestWrapperClass
+                        .getConstructor(TargetAppClassRegistry
+                                .getClass(ClassNames.HTTP_REQUEST_CLASS_NAME))
+                        .newInstance(request);
+            }
+            if (!response.getClass().isAssignableFrom(responseWrapperClass)) {
+                response = responseWrapperClass
+                        .getConstructor(TargetAppClassRegistry
+                                .getClass(ClassNames.HTTP_RESPONSE_CLASS_NAME))
+                        .newInstance(response);
+            }
 
-    // @Advice.OnMethodEnter()
-    // public static void onMethodEnter(
-    // @Advice.Argument(readOnly = false, value = 0, typing =
-    // Assigner.Typing.DYNAMIC) Object request,
-    // @Advice.Argument(readOnly = false, value = 1, typing =
-    // Assigner.Typing.DYNAMIC) Object response)
-    // throws Exception {
-    // // Check if response is not null and is an instance of HttpServletResponse
-    // try {
-    // //
-    // 从目标应用加载ContentCachingResponseWrapper类、ContentCachingRequestWrapper类，避免agent依赖
-    // Class<?> responseWrapperClass = TargetAppClassRegistry
-    // .getClass(ClassNames.CONTENT_CACHING_RESPONSE_WRAPPER_CLASS_NAME);
-    // // Get the ContentCachingRequestWrapper class
-    // Class<?> requestWrapperClass = TargetAppClassRegistry
-    // .getClass(ClassNames.CONTENT_CACHING_REQUEST_WRAPPER_CLASS_NAME);
-    // if (responseWrapperClass == null || requestWrapperClass == null) {
-    // return;
-    // }
-    // // 分别包装HttpServletRequest和HttpServletResponse
-    // // 这里需要注意，有可能这个时候的request和response已经被包装过了，就不需要重复进行wrapper了
-    // if (!request.getClass().isAssignableFrom(requestWrapperClass)) {
-    // request = requestWrapperClass
-    // .getConstructor(TargetAppClassRegistry
-    // .getClass(ClassNames.HTTP_REQUEST_CLASS_NAME))
-    // .newInstance(request);
-    // }
-    // if (!response.getClass().isAssignableFrom(responseWrapperClass)) {
-    // response = responseWrapperClass
-    // .getConstructor(TargetAppClassRegistry
-    // .getClass(ClassNames.HTTP_RESPONSE_CLASS_NAME))
-    // .newInstance(response);
-    // }
-    // // 记录请求时间
-    // long reqTime = System.currentTimeMillis();
-    // ReflectMethods.invokeMethod(request.getClass(), MethodNames.SET_ATTR_METHOD,
-    // new Class[] { String.class, Object.class }, request,
-    // HeaderNames.X_REQUEST_TIME,
-    // reqTime);
-    // } catch (Exception e) {
-    // // Log the error but do not interrupt execution
-    // e.printStackTrace();
-    // System.err.println("Failed to wrap response: " + e.getMessage());
-    // }
-    // }
+            HttpMetricsData httpMetricsData = new HttpMetricsData();
+            httpMetricsData.setReqTime(System.currentTimeMillis());
+            httpMetricsData.setHttpUrl(requestUri);
+            httpMetricsData.setHttpMethod(httpMethod);
+            httpMetricsDataThreadLocal.set(httpMetricsData);
+        } catch (Exception e) {
+            // Log the error but do not interrupt execution
+            e.printStackTrace();
+            System.err.println("Failed to wrap response: " + e.getMessage());
+        }
+        return null;
+    }
 
     @Advice.OnMethodExit()
     public static void onMethodExit(
@@ -102,37 +124,19 @@ public class DispatcherServletDelegation {
         if (fixedValue != null) {
             return;
         }
-        AgentConfig agentConfig = ConfigLoader.getAgentConfig();
-        String requestBody = null;
-        String responseBodyStr = null;
+        // 如果threadLocal 没有，什么都不做
+        HttpMetricsData metricsData = httpMetricsDataThreadLocal.get();
+        if (metricsData == null) {
+            return;
+        }
+        String requestBody;
+        String responseBodyStr;
         Class<?> requestClass = request.getClass();
         Class<?> responseClass = response.getClass();
 
         // 先这样写，后续根据不同应用的赋值方式区
         String traceId = UUID.randomUUID().toString();
         try {
-            // 获取请求时间
-            Long reqTime = ReflectMethods.invokeMethod(requestClass, MethodNames.GET_ATTR_METHOD,
-                    new Class[]{String.class}, request, HeaderNames.X_REQUEST_TIME);
-            // 获取请求路径
-            String requestUri = ReflectMethods.invokeMethod(requestClass,
-                    MethodNames.GET_REQUEST_URI_METHOD, request);
-            String contentType = ReflectMethods.invokeMethod(requestClass,
-                    MethodNames.GET_CONTENT_TYPE_METHOD, request);
-            // 可支持忽略哪些路径不采集,默认/error
-            boolean shouldIgnore = false;
-            for (String ignoreUrl : agentConfig.getIgnoreUrls()) {
-                if (requestUri.contains(ignoreUrl)) {
-                    shouldIgnore = true;
-                    break;
-                }
-            }
-            // 忽略特定的方法
-            String httpMethod = ReflectMethods.invokeMethod(requestClass, MethodNames.GET_METHOD, request);
-            shouldIgnore = shouldIgnore || !agentConfig.getSupportMethods().contains(httpMethod);
-            if (shouldIgnore) {
-                return;
-            }
             int httpStatus = ReflectMethods.invokeMethod(responseClass, MethodNames.GET_STATUS_METHOD,
                     response);
             // 获取queryString
@@ -142,13 +146,9 @@ public class DispatcherServletDelegation {
                 // System.out.println("request uri: " + requestUri + ", http status:" +
                 // httpStatus);
                 // 状态码不对的也需要记录输入内容
-                requestBody = getRequestBody(request, httpMethod);
-                HttpMetricsData metricsData = new HttpMetricsData();
+                requestBody = getRequestBody(request, metricsData.getHttpMethod());
                 metricsData.setHttpStatus(httpStatus + "");
-                metricsData.setHttpMethod(httpMethod);
-                metricsData.setHttpUrl(requestUri);
                 metricsData.setQueryParams(queryStringParams);
-                metricsData.setReqTime(reqTime);
                 metricsData.setRequestBody(requestBody);
                 metricsData.setTraceId(traceId);
                 metricsData.setMetricType("server");
@@ -158,27 +158,19 @@ public class DispatcherServletDelegation {
                 return;
             }
             // 上传请求200 情况 下不做特殊处理
-            // 部分情况下contentType可能为空
-            if (contentType != null && contentType.startsWith("multipart/")) {
-                return;
-            }
             responseBodyStr = getResponseBody(response);
-            requestBody = getRequestBody(request, httpMethod);
-            HttpMetricsData metricsEvent = new HttpMetricsData();
-            metricsEvent.setHttpStatus(httpStatus + "");
-            metricsEvent.setHttpMethod(httpMethod);
-            metricsEvent.setHttpUrl(requestUri);
-            metricsEvent.setReqTime(reqTime);
-            metricsEvent.setQueryParams(queryStringParams);
-            metricsEvent.setRequestBody(requestBody);
-            metricsEvent.setResponseBody(responseBodyStr);
-            metricsEvent.setTraceId(traceId);
-            metricsEvent.setMetricType("server");
-            MetricsEvent<HttpMetricsData> event = new MetricsEvent<HttpMetricsData>();
-            event.setEventData(metricsEvent);
+            requestBody = getRequestBody(request, metricsData.getHttpMethod());
+            metricsData.setHttpStatus(httpStatus + "");
+            metricsData.setQueryParams(queryStringParams);
+            metricsData.setRequestBody(requestBody);
+            metricsData.setResponseBody(responseBodyStr);
+            metricsData.setTraceId(traceId);
+            metricsData.setMetricType("server");
+            MetricsEvent<HttpMetricsData> event = new MetricsEvent<>();
+            event.setEventData(metricsData);
             EventReporterHolder.getEventReporter().asyncReport(event);
         } catch (Exception e) {
-            System.out.println("intercept on doDispatch error." + e.getMessage());
+            System.out.println("[dome agent] intercept on doDispatch error." + e.getMessage());
         } finally {
             // Copy the response body to the response
             ReflectMethods.invokeMethod(responseClass, MethodNames.COPY_BODY_TO_RESPONSE_METHOD, response);

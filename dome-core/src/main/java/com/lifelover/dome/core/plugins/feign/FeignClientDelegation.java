@@ -91,7 +91,7 @@ public class FeignClientDelegation {
             EventReporterHolder.getEventReporter().asyncReport(event);
         } catch (Exception e) {
             e.printStackTrace();
-            System.out.println("intercept on Feign response error: " + e.getMessage());
+            System.out.println("[dome agent] intercept on Feign response error: " + e.getMessage());
         }
     }
 

@@ -33,25 +33,25 @@ public class DbConfig {
     }
 
     public void init(){
-        InputStream is = getClass().getResourceAsStream(this.sqlPath);
-        if (is == null) {
-            throw new RuntimeException("未读取到sql脚本文件");
-        }
+//        InputStream is = getClass().getResourceAsStream(this.sqlPath);
+//        if (is == null) {
+//            throw new RuntimeException("未读取到sql脚本文件");
+//        }
         try {
 //            InputStream is = Files.newInputStream(new File(this.sqlPath).toPath());
-            StringBuilder out = new StringBuilder(4096);
-            InputStreamReader reader = new InputStreamReader(is, StandardCharsets.UTF_8);
-            char[] buffer = new char[4096];
-            int charsRead;
-            while ((charsRead = reader.read(buffer)) != -1) {
-                out.append(buffer, 0, charsRead);
-            }
-            final String sqlScript = out.toString();
+//            StringBuilder out = new StringBuilder(4096);
+//            InputStreamReader reader = new InputStreamReader(is, StandardCharsets.UTF_8);
+//            char[] buffer = new char[4096];
+//            int charsRead;
+//            while ((charsRead = reader.read(buffer)) != -1) {
+//                out.append(buffer, 0, charsRead);
+//            }
+//            final String sqlScript = out.toString();
             jdbi.useHandle(handle -> {
                 // 自动分割并执行每条SQL语句
-                handle.createScript(sqlScript).executeAsSeparateStatements();
+                handle.createScript(CreateTable.INIT_SQL).executeAsSeparateStatements();
             });
-            System.out.println("初始化建表成功.");
+            System.out.println("[dome agent] 初始化建表成功.");
         } catch (Exception e) {
             throw new RuntimeException("初始化建表失败.",e);
         }

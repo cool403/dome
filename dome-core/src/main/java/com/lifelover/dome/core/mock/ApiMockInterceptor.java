@@ -37,7 +37,7 @@ public class ApiMockInterceptor {
         }
         String isMockEnabled = apiConfig.getIsMockEnabled();
         if (YesOrNo.N.equals(isMockEnabled)) {
-            System.out.println("当前接口未开启mock");
+            System.out.println("[dome agent] 当前接口未开启mock");
             return null;
         }
         return apiConfig.getReplayApiRecords();

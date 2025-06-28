@@ -13,6 +13,7 @@ public class EventReporterHolder {
     private static class __EventReporterHolder {
         private static final EventReporter INSTANCE1 = new HttpEventReporter();
         private static final EventReporter INSTANCE2 = new ConsoleEventReporter();
+        private static final EventReporter INSTANCE3 = new DbEventReporter();
     }
 
     /**
@@ -21,8 +22,11 @@ public class EventReporterHolder {
      */
     public static EventReporter getEventReporter() {
         String reporterType = ConfigLoader.getAgentConfig().getReporterType();
-        if ("CONSOLE".equals(reporterType)) {
+        if (ReportType.CONSOLE.name().equals(reporterType)) {
             return __EventReporterHolder.INSTANCE2;
+        }
+        if (ReportType.DB.name().equals(reporterType)) {
+            return __EventReporterHolder.INSTANCE3;
         }
         return __EventReporterHolder.INSTANCE1;
     }

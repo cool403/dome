@@ -90,7 +90,7 @@ public class Okhttp4Adapter extends AbstractOkHttpAdapter {
         byte[] bytes = ReflectMethods.invokeMethod(responseBodyClz, MethodNames.BYTES_METHOD, responseBody);
         httpMetricsData.setResponseBody(new String(bytes));
         // 打印日志
-        System.out.println("Response body: " + new String(bytes));
+        System.out.println("[dome agent] Response body: " + new String(bytes));
 
         // 由于流是单次读取，所以创建新的response
         Object newResponseBuilder = ReflectMethods.invokeMethod(responseClz, MethodNames.NEW_BUILDER_METHOD,

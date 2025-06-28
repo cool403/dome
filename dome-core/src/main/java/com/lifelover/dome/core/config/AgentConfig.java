@@ -67,7 +67,7 @@ public class AgentConfig {
         if (jdbcUrl == null) {
             //默认使用临时目录/dome.db
             jdbcUrl = System.getProperty("java.io.tmpdir") + File.separator + "dome.db";
-            System.out.println("未配置jdbcUrl,使用默认临时目录:" + jdbcUrl);
+            System.out.println("[dome agent] 未配置jdbcUrl,使用默认临时目录:" + jdbcUrl);
         }
         final DbConfig dbConfig = new DbConfig(jdbcUrl);
         //初始化数据表

@@ -31,7 +31,7 @@ public class ConfigLoader {
             }
             //初始化数据源;只有是DB才进行初始化数据源
             if (ReportType.DB.name().equals(reporterType)) {
-                System.out.println("repoortType=DB时，会进行db初始化");
+                System.out.println("[dome agent] repoortType=DB时，会进行db初始化");
                 agentConfig.initDbAccess(paramMap);
             }
         }
