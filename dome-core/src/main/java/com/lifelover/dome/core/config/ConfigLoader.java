@@ -3,6 +3,7 @@ package com.lifelover.dome.core.config;
 import java.util.Map;
 
 import com.lifelover.dome.core.helpers.EnvNames;
+import com.lifelover.dome.core.report.ReportType;
 
 public class ConfigLoader {
     private ConfigLoader() {
@@ -28,8 +29,11 @@ public class ConfigLoader {
             if (reporterType != null && !reporterType.isEmpty()) {
                 agentConfig.setReporterType(reporterType);
             }
-            //初始化数据源
-            agentConfig.initDbAccess(paramMap);
+            //初始化数据源;只有是DB才进行初始化数据源
+            if (ReportType.DB.name().equals(reporterType)) {
+                System.out.println("repoortType=DB时，会进行db初始化");
+                agentConfig.initDbAccess(paramMap);
+            }
         }
     }
 
