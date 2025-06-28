@@ -17,7 +17,7 @@ public final class CreateTable {
             "    trace_id TEXT,\n" +
             "    req_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,\n" +
             "    res_time TIMESTAMP,\n" +
-            "    http_status INTEGER,\n" +
+            "    http_status TEXT,\n" +
             "    headers TEXT,  -- 可以存储JSON格式的请求/响应头\n" +
             "    response_headers TEXT,\n" +
             "    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP\n" +

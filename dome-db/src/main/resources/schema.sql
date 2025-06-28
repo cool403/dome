@@ -9,7 +9,7 @@ CREATE TABLE if not exists api_records (
     trace_id TEXT,
     req_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     res_time TIMESTAMP,
-    http_status INTEGER,
+    http_status TEXT,
     headers TEXT,  -- 可以存储JSON格式的请求/响应头
     response_headers TEXT,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
