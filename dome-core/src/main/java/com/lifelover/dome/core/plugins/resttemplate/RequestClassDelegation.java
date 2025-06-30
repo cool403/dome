@@ -73,17 +73,8 @@ public class RequestClassDelegation {
                 System.out.println("[dome agent] resttemplate_url=" + httpUrl + ",http_method=" + httpMethod + "命中mock,直接返回mock数据");
                 // 构建mock响应
                 try {
-                    Class<?> responseClz = TargetAppClassRegistry.getClass(ClassNames.RT_MOCK_RESPONSE_CLASS_NAME);
-                    System.out.println("------------2323"+responseClz);
-                    //创建mock响应
-                    Object response = responseClz.getConstructor(byte[].class,int.class).newInstance(apiRecords.getResponseBody().getBytes(),200);
-                    
-                    // 设置响应头;getHeaders
-                    Object mockHeaders = ReflectMethods.invokeMethod(responseClz, "getHeaders", response);
-                    //设置mockHeaders
-                    ReflectMethods.invokeMethod(mockHeaders.getClass(), SET_METHOD, 
-                            new Class[] { String.class, String.class }, mockHeaders, "Content-Type", "application/json");
-                    return response;
+                    Object mockResponse = DynamicResponseInstanceBuilder.createClientHttpResponse(apiRecords.getResponseBody(), 200, "application/json");
+                    return mockResponse;
                 } catch (Exception e) {
                     System.err.println("[dome agent] Failed to create mock response: " + e.getMessage());
                     e.printStackTrace();
