@@ -138,6 +138,8 @@ public class FeignClientDelegation {
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("[dome agent] intercept on Feign response error: " + e.getMessage());
+        } finally {
+            httpMetricsDataThreadLocal.remove();
         }
     }
 
