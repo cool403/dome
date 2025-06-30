@@ -88,9 +88,9 @@ public class RequestClassDelegation {
                     
                     // 设置响应头
                     Class<?> headersClz = TargetAppClassRegistry.getClass(ClassNames.RT_HTTP_HEADER_CLASS_NAME);
-                    Object headers = headersClz.newInstance();
+                    Object headers1 = headersClz.newInstance();
                     ReflectMethods.invokeMethod(headersClz, SET_METHOD, 
-                            new Class[] { String.class, String.class }, headers, "Content-Type", "application/json");
+                            new Class[] { String.class, String.class }, headers1, "Content-Type", "application/json");
                     ReflectMethods.invokeMethod(responseClz, SET_HEADERS_METHOD, 
                             new Class[] { headersClz }, response, headers);
                     
@@ -127,15 +127,16 @@ public class RequestClassDelegation {
 
     @Advice.OnMethodExit(onThrowable = Throwable.class)
     public static void onMethodExit(@Advice.This Object call,
+            @Advice.Enter Object fixedValue,
             @Advice.Return(readOnly = false, typing = Assigner.Typing.DYNAMIC) Object response,
             @Advice.Argument(value = 0, typing = Assigner.Typing.DYNAMIC) Object httpHeaders,
             @Advice.Argument(value = 1, typing = Assigner.Typing.DYNAMIC) byte[] reqBytes,
             @Advice.Thrown Throwable throwable) {
+        if (fixedValue != null){
+            response = fixedValue;
+            return;   
+        }
         try {
-            // 如果是mock返回，直接返回
-            if (response instanceof Boolean && (Boolean) response) {
-                return;
-            }
             HttpMetricsData httpMetricsData = httpMetricsDataThreadLocal.get();
             if (httpMetricsData == null) {
                 return;
