@@ -73,27 +73,16 @@ public class RequestClassDelegation {
                 System.out.println("[dome agent] resttemplate_url=" + httpUrl + ",http_method=" + httpMethod + "命中mock,直接返回mock数据");
                 // 构建mock响应
                 try {
-                    Class<?> responseClz = TargetAppClassRegistry.getClass(ClassNames.RT_BASIC_RESPONSE_CLASS_NAME);
-                    Object response = responseClz.newInstance();
+                    Class<?> responseClz = TargetAppClassRegistry.getClass(ClassNames.RT_MOCK_RESPONSE_CLASS_NAME);
+                    System.out.println("------------2323"+responseClz);
+                    //创建mock响应
+                    Object response = responseClz.getConstructor(byte[].class,int.class).newInstance(apiRecords.getResponseBody().getBytes(),200);
                     
-                    // 设置状态码
-                    ReflectMethods.invokeMethod(responseClz, SET_RAW_STATUS_METHOD, 
-                            new Class[] { int.class }, response, 200);
-                    
-                    // 设置响应体
-                    Class<?> inputStreamClz = TargetAppClassRegistry.getClass(INPUT_STREAM_CLASS_NAME);
-                    Object inputStream = inputStreamClz.getConstructor(byte[].class).newInstance(apiRecords.getResponseBody().getBytes());
-                    ReflectMethods.invokeMethod(responseClz, SET_BODY_METHOD, 
-                            new Class[] { inputStreamClz }, response, inputStream);
-                    
-                    // 设置响应头
-                    Class<?> headersClz = TargetAppClassRegistry.getClass(ClassNames.RT_HTTP_HEADER_CLASS_NAME);
-                    Object headers1 = headersClz.newInstance();
-                    ReflectMethods.invokeMethod(headersClz, SET_METHOD, 
-                            new Class[] { String.class, String.class }, headers1, "Content-Type", "application/json");
-                    ReflectMethods.invokeMethod(responseClz, SET_HEADERS_METHOD, 
-                            new Class[] { headersClz }, response, headers);
-                    
+                    // 设置响应头;getHeaders
+                    Object mockHeaders = ReflectMethods.invokeMethod(responseClz, "getHeaders", response);
+                    //设置mockHeaders
+                    ReflectMethods.invokeMethod(mockHeaders.getClass(), SET_METHOD, 
+                            new Class[] { String.class, String.class }, mockHeaders, "Content-Type", "application/json");
                     return response;
                 } catch (Exception e) {
                     System.err.println("[dome agent] Failed to create mock response: " + e.getMessage());
