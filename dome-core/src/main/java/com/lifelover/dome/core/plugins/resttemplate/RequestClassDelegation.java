@@ -98,7 +98,7 @@ public class RequestClassDelegation {
             InputStream is = ReflectMethods.invokeMethod(response.getClass(), MethodNames.GET_BODY_METHOD, response);
             byte[] bodyBytes = StreamUtils.copyToByteArray(is);
             httpMetricsData.setResponseBody(new String(bodyBytes));
-            httpMetricsData.setHttpMethod(httpStatus + "");
+            httpMetricsData.setHttpStatus(httpStatus + "");
             MetricsEvent<HttpMetricsData> event = new MetricsEvent<HttpMetricsData>();
             event.setEventData(httpMetricsData);
             EventReporterHolder.getEventReporter().asyncReport(event); 
