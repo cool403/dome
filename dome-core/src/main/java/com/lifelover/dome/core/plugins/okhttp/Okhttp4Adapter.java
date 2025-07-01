@@ -17,30 +17,38 @@ public class Okhttp4Adapter extends AbstractOkHttpAdapter {
         // 获取请求方法
         String method = ReflectMethods.invokeMethod(originalRequestClz, MethodNames.METHOD_METHOD, originalRequest);
         // 获取请求url
-        String url = ReflectMethods.invokeMethod(originalRequestClz, MethodNames.URL_METHOD, originalRequest).toString();
+        String url = ReflectMethods.invokeMethod(originalRequestClz, MethodNames.URL_METHOD, originalRequest)
+                .toString();
         HttpMetricsData httpMetricsData = new HttpMetricsData();
         // post 记录请求体
         if ("POST".equals(method)) {
-            Object requestBody = ReflectMethods.invokeMethod(originalRequestClz, MethodNames.BODY_METHOD, originalRequest);
+            Object requestBody = ReflectMethods.invokeMethod(originalRequestClz, MethodNames.BODY_METHOD,
+                    originalRequest);
             Class<?> bufferSinkClz = TargetAppClassRegistry.getClass(ClassNames.OKIO_BUFFERED_SINK_CLASS_NAME);
             if (requestBody != null && bufferClz != null) {
                 Class<?> requestBodyClz = requestBody.getClass();
                 // 获取contentType
-                Object contentType = ReflectMethods.invokeMethod(requestBodyClz, MethodNames.CONTENT_TYPE_METHOD, requestBody);
+                Object contentType = ReflectMethods.invokeMethod(requestBodyClz, MethodNames.CONTENT_TYPE_METHOD,
+                        requestBody);
                 Object buffer = bufferClz.getConstructor().newInstance();
-                ReflectMethods.invokeMethod(requestBodyClz, MethodNames.WRITE_TO_METHOD, new Class[] { bufferSinkClz }, requestBody, buffer);
+                ReflectMethods.invokeMethod(requestBodyClz, MethodNames.WRITE_TO_METHOD, new Class[] { bufferSinkClz },
+                        requestBody, buffer);
                 // 获取字节数据，并且复制
                 byte[] bytes = ReflectMethods.invokeMethod(bufferClz, MethodNames.READ_BYTES_ARRAY_METHOD, buffer);
                 // 记录请求体
                 httpMetricsData.setRequestBody(new String(bytes));
                 Class<?> mediaTypeClz = TargetAppClassRegistry.getClass(ClassNames.MEDIA_TYPE_CLASS_NAME);
-                Method createMethod = ReflectMethods.getMethod(requestBodyClz, MethodNames.CREATE_METHOD, mediaTypeClz, byte[].class);
+                Method createMethod = ReflectMethods.getMethod(requestBodyClz, MethodNames.CREATE_METHOD, mediaTypeClz,
+                        byte[].class);
                 Object newRequestBody = createMethod.invoke(null, contentType, bytes);
-                Object newRequestBuilder = ReflectMethods.invokeMethod(originalRequestClz, MethodNames.NEW_BUILDER_METHOD, originalRequest);
+                Object newRequestBuilder = ReflectMethods.invokeMethod(originalRequestClz,
+                        MethodNames.NEW_BUILDER_METHOD, originalRequest);
                 Class<?> newRequestBuilderClz = newRequestBuilder.getClass();
                 newRequestBuilder = ReflectMethods.invokeMethod(newRequestBuilderClz, MethodNames.METHOD_METHOD,
-                        new Class[] { String.class, requestBodyClz.getSuperclass() }, newRequestBuilder, method, newRequestBody);
-                Object newRequest = ReflectMethods.invokeMethod(newRequestBuilderClz, MethodNames.BUILD_METHOD, newRequestBuilder);
+                        new Class[] { String.class, requestBodyClz.getSuperclass() }, newRequestBuilder, method,
+                        newRequestBody);
+                Object newRequest = ReflectMethods.invokeMethod(newRequestBuilderClz, MethodNames.BUILD_METHOD,
+                        newRequestBuilder);
                 // 3. 替换原始Request（通过反射修改字段）
                 ReflectMethods.setFieldValue(call, "originalRequest", newRequest);
             }

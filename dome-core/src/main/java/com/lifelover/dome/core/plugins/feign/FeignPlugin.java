@@ -23,9 +23,9 @@ public class FeignPlugin extends AbstractBbPlugin {
                     @Override
                     protected Builder<?> build(Builder<?> builder, TypeDescription typeDescription,
                             ClassLoader classLoader, JavaModule module) {
-                        //判断是否加载了feign-okhttp
-                        //如果加载了feign-okhttp，那么feign的http请求是通过okhttp实现的，
-                        //否则feign的http请求是通过httpclient实现的
+                        // 判断是否加载了feign-okhttp
+                        // 如果加载了feign-okhttp，那么feign的http请求是通过okhttp实现的，
+                        // 否则feign的http请求是通过httpclient实现的
                         if (hasFeignOkHttp(classLoader)) {
                             return builder;
                         }

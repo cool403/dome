@@ -55,31 +55,41 @@ public abstract class AbstractOkHttpAdapter implements OkhttpAdapter {
         ApiRecords apiRecords = ApiMockInterceptor.mock(apiMockContext);
         if (apiRecords != null) {
             try {
-                System.out.println("[dome agent] okhttp_url=" + httpUrl + ",http_method=" + httpMethod + "命中mock,直接返回mock数据");
-                Class<?> responseBuilderClz = TargetAppClassRegistry.getClass(ClassNames.OK_RESPONSE_BUILDER_CLASS_NAME);
+                System.out.println(
+                        "[dome agent] okhttp_url=" + httpUrl + ",http_method=" + httpMethod + "命中mock,直接返回mock数据");
+                Class<?> responseBuilderClz = TargetAppClassRegistry
+                        .getClass(ClassNames.OK_RESPONSE_BUILDER_CLASS_NAME);
                 Class<?> requestClz = TargetAppClassRegistry.getClass(ClassNames.OK_REQUEST_CLASS_NAME);
                 Object responseBuilder = responseBuilderClz.getConstructor().newInstance();
-                //初始化responseBody
+                // 初始化responseBody
                 Class<?> responseBodyClz = TargetAppClassRegistry.getClass(ClassNames.RESPONSE_BODY_CLASS_NAME);
                 Class<?> mediaTypeClz = TargetAppClassRegistry.getClass(ClassNames.MEDIA_TYPE_CLASS_NAME);
-                //默认是json
-                Object mediaType = ReflectMethods.invokeMethod(mediaTypeClz, "parse", new Class[] { String.class }, null, "application/json");
+                // 默认是json
+                Object mediaType = ReflectMethods.invokeMethod(mediaTypeClz, "parse", new Class[] { String.class },
+                        null, "application/json");
                 Object newResponseBody = ReflectMethods.invokeMethod(responseBodyClz, MethodNames.CREATE_METHOD,
                         new Class[] { byte[].class, mediaTypeClz },
                         null, apiRecords.getResponseBody().getBytes(StandardCharsets.UTF_8), mediaType);
-                //调用setBody$okhttp
-                ReflectMethods.invokeMethod(responseBuilderClz, "setBody$okhttp", new Class[] { responseBodyClz}, responseBuilder, newResponseBody);
-                ReflectMethods.invokeMethod(responseBuilderClz, "setCode$okhttp", new Class[] { int.class }, responseBuilder, 200);
-                //设置message
-                ReflectMethods.invokeMethod(responseBuilderClz, "setMessage$okhttp", new Class[] { String.class }, responseBuilder, "OK");
-                //添加header
-                ReflectMethods.invokeMethod(responseBuilderClz, "addHeader", new Class[] { String.class, String.class }, responseBuilder, "Content-Type", "application/json");
-                //设置request
-                ReflectMethods.invokeMethod(responseBuilderClz, "setRequest$okhttp", new Class[] { requestClz }, responseBuilder, originalRequest);
-                //设置Protocol
+                // 调用setBody$okhttp
+                ReflectMethods.invokeMethod(responseBuilderClz, "setBody$okhttp", new Class[] { responseBodyClz },
+                        responseBuilder, newResponseBody);
+                ReflectMethods.invokeMethod(responseBuilderClz, "setCode$okhttp", new Class[] { int.class },
+                        responseBuilder, 200);
+                // 设置message
+                ReflectMethods.invokeMethod(responseBuilderClz, "setMessage$okhttp", new Class[] { String.class },
+                        responseBuilder, "OK");
+                // 添加header
+                ReflectMethods.invokeMethod(responseBuilderClz, "addHeader", new Class[] { String.class, String.class },
+                        responseBuilder, "Content-Type", "application/json");
+                // 设置request
+                ReflectMethods.invokeMethod(responseBuilderClz, "setRequest$okhttp", new Class[] { requestClz },
+                        responseBuilder, originalRequest);
+                // 设置Protocol
                 Class<?> protocolClz = TargetAppClassRegistry.getClass(ClassNames.OK_PROTOCOL_CLASS_NAME);
-                Object protocol = ReflectMethods.invokeMethod(protocolClz, "get", new Class[] { String.class }, null, "http/1.1");
-                ReflectMethods.invokeMethod(responseBuilderClz, "setProtocol$okhttp", new Class[] { protocolClz }, responseBuilder, protocol);
+                Object protocol = ReflectMethods.invokeMethod(protocolClz, "get", new Class[] { String.class }, null,
+                        "http/1.1");
+                ReflectMethods.invokeMethod(responseBuilderClz, "setProtocol$okhttp", new Class[] { protocolClz },
+                        responseBuilder, protocol);
                 return ReflectMethods.invokeMethod(responseBuilderClz, "build", responseBuilder);
             } catch (Exception e) {
                 System.err.println("[dome agent] 构造mock response失败: " + e.getMessage());

@@ -26,6 +26,7 @@ public class FeignClientDelegation {
 
     /**
      * 拦截器，返回为true，就不会真实调用，为false就会真实调用，适合mock工具开发
+     * 
      * @param request
      * @param options
      * @return
@@ -54,19 +55,21 @@ public class FeignClientDelegation {
             apiMockContext.setHttpUrl(httpUrl);
             ApiRecords apiRecords = ApiMockInterceptor.mock(apiMockContext);
             if (apiRecords != null) {
-                System.out.println("[dome agent] feign_url=" + httpUrl + ",http_method=" + httpMethod + "命中mock,直接返回mock数据");
+                System.out.println(
+                        "[dome agent] feign_url=" + httpUrl + ",http_method=" + httpMethod + "命中mock,直接返回mock数据");
                 // 构造mock response
                 Object responseBuilder = ReflectMethods.invokeMethod(resClz, "builder", null);
                 Class<?> responseBuilderClz = responseBuilder.getClass();
                 responseBuilder = ReflectMethods.invokeMethod(responseBuilderClz, "status",
                         new Class[] { int.class }, responseBuilder, 200);
-                //需要塞入原始request
+                // 需要塞入原始request
                 responseBuilder = ReflectMethods.invokeMethod(responseBuilderClz, "request",
                         new Class[] { reqClz }, responseBuilder, request);
                 responseBuilder = ReflectMethods.invokeMethod(responseBuilderClz, "body",
-                        new Class[] { byte[].class }, responseBuilder, apiRecords.getResponseBody().getBytes(StandardCharsets.UTF_8));
-                //塞入contentType 为application/json
-                Map<String,Collection<String>> headers = new HashMap<>();
+                        new Class[] { byte[].class }, responseBuilder,
+                        apiRecords.getResponseBody().getBytes(StandardCharsets.UTF_8));
+                // 塞入contentType 为application/json
+                Map<String, Collection<String>> headers = new HashMap<>();
                 headers.put("Content-Type", Collections.singletonList("application/json"));
                 responseBuilder = ReflectMethods.invokeMethod(responseBuilderClz, "headers",
                         new Class[] { Map.class }, responseBuilder, headers);
@@ -81,7 +84,7 @@ public class FeignClientDelegation {
             httpMetricsData.setHttpMethod(httpMethod);
             httpMetricsData.setReqTime(now);
             httpMetricsData.setMetricType("client");
-            if(reqBytes != null) {
+            if (reqBytes != null) {
                 httpMetricsData.setRequestBody(new String(reqBytes, StandardCharsets.UTF_8));
             }
             httpMetricsDataThreadLocal.set(httpMetricsData);
@@ -98,9 +101,9 @@ public class FeignClientDelegation {
             @Advice.Return(readOnly = false, typing = Assigner.Typing.DYNAMIC) Object response,
             @Advice.Thrown Throwable throwable)
             throws Exception {
-        if (fixedValue != null){
+        if (fixedValue != null) {
             response = fixedValue;
-            return;   
+            return;
         }
         try {
             // 如果threadLocal 没有，什么都不做
@@ -131,7 +134,8 @@ public class FeignClientDelegation {
             // body 塞入字节数组
             responseBuilder = ReflectMethods.invokeMethod(responseBuilder.getClass(), MethodNames.BODY_METHOD,
                     new Class[] { byte[].class }, responseBuilder, bodyBytes);
-            response = ReflectMethods.invokeMethod(responseBuilder.getClass(), MethodNames.BUILD_METHOD, responseBuilder);
+            response = ReflectMethods.invokeMethod(responseBuilder.getClass(), MethodNames.BUILD_METHOD,
+                    responseBuilder);
             MetricsEvent<HttpMetricsData> event = new MetricsEvent<HttpMetricsData>();
             event.setEventData(httpMetricsData);
             EventReporterHolder.getEventReporter().asyncReport(event);
@@ -146,7 +150,7 @@ public class FeignClientDelegation {
     public static byte[] readResponseBytes(Object response) throws Exception {
         // 获取inputStream
         Object body = ReflectMethods.invokeMethod(response.getClass(), MethodNames.BODY_METHOD, response);
-        InputStream is  = ReflectMethods.invokeMethod(body.getClass(), "asInputStream", body);
+        InputStream is = ReflectMethods.invokeMethod(body.getClass(), "asInputStream", body);
         return StreamUtils.copyToByteArray(is);
     }
 }

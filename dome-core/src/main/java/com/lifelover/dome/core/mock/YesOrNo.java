@@ -1,7 +1,7 @@
 package com.lifelover.dome.core.mock;
 
 public class YesOrNo {
-    private YesOrNo(){
+    private YesOrNo() {
 
     }
 

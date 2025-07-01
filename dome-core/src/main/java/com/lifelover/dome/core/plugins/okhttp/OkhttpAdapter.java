@@ -1,12 +1,11 @@
 package com.lifelover.dome.core.plugins.okhttp;
 
-
 public interface OkhttpAdapter {
-    
+
     /**
      * 
      * @param call
-     * @return 
+     * @return
      */
     Object beforeCall(Object call);
 

@@ -25,6 +25,7 @@ public class RequestClassDelegation {
 
     /**
      * 拦截器，返回为true，就不会真实调用，为false就会真实调用，适合mock工具开发
+     * 
      * @param call
      * @param httpHeaders
      * @param reqBytes
@@ -38,20 +39,20 @@ public class RequestClassDelegation {
         try {
             // 清除threadLocal
             httpMetricsDataThreadLocal.remove();
-            
+
             // 获取请求信息
             HttpMetricsData httpMetricsData = new HttpMetricsData();
             final Long now = System.currentTimeMillis();
             httpMetricsData.setReqTime(now);
             httpMetricsData.setMetricType("client");
-            
+
             // 获取请求信息
             Class<?> reqClz = call.getClass();
             String httpUrl = ReflectMethods.invokeMethod(reqClz, MethodNames.GET_URI_METHOD, call).toString();
             String httpMethod = ReflectMethods.invokeMethod(reqClz, MethodNames.GET_METHOD_METHOD, call).toString();
-            //获取headers
+            // 获取headers
             Object headers = ReflectMethods.invokeMethod(reqClz, MethodNames.GET_HEADERS_METHOD, call);
-            //获取contentType
+            // 获取contentType
             Object mediaType = ReflectMethods.invokeMethod(headers.getClass(), "getContentType", headers);
             String contentType = mediaType.toString();
 
@@ -60,14 +61,16 @@ public class RequestClassDelegation {
             apiMockContext.setHttpUrl(httpUrl);
             apiMockContext.setHttpMethod(httpMethod);
             apiMockContext.setContentType(contentType);
-            
+
             // 判断是否需要mock
             ApiRecords apiRecords = ApiMockInterceptor.mock(apiMockContext);
             if (apiRecords != null) {
-                System.out.println("[dome agent] resttemplate_url=" + httpUrl + ",http_method=" + httpMethod + "命中mock,直接返回mock数据");
+                System.out.println("[dome agent] resttemplate_url=" + httpUrl + ",http_method=" + httpMethod
+                        + "命中mock,直接返回mock数据");
                 // 构建mock响应
                 try {
-                    Object mockResponse = DynamicResponseInstanceBuilder.createClientHttpResponse(apiRecords.getResponseBody(), 200, "application/json");
+                    Object mockResponse = DynamicResponseInstanceBuilder
+                            .createClientHttpResponse(apiRecords.getResponseBody(), 200, "application/json");
                     return mockResponse;
                 } catch (Exception e) {
                     System.err.println("[dome agent] Failed to create mock response: " + e.getMessage());
@@ -75,14 +78,14 @@ public class RequestClassDelegation {
                     return null;
                 }
             }
-            
+
             // 加载缓存 HttpHeader
             Class<?> httpHeaderClz = TargetAppClassRegistry.getClass(ClassNames.RT_HTTP_HEADER_CLASS_NAME);
             // 调用 toSingleValueMap
             ReflectMethods.invokeMethod(httpHeaderClz,
                     MethodNames.TO_SINGLE_VALUE_MAP_METHOD, httpHeaders);
             // 获取请求体
-            //判断是否已经被BufferingClientHttpRequestWrapper 包装过
+            // 判断是否已经被BufferingClientHttpRequestWrapper 包装过
             if (reqBytes != null) {
                 httpMetricsData.setRequestBody(new String(reqBytes));
             }
@@ -106,9 +109,9 @@ public class RequestClassDelegation {
             @Advice.Argument(value = 0, typing = Assigner.Typing.DYNAMIC) Object httpHeaders,
             @Advice.Argument(value = 1, typing = Assigner.Typing.DYNAMIC) byte[] reqBytes,
             @Advice.Thrown Throwable throwable) {
-        if (fixedValue != null){
+        if (fixedValue != null) {
             response = fixedValue;
-            return;   
+            return;
         }
         try {
             HttpMetricsData httpMetricsData = httpMetricsDataThreadLocal.get();
@@ -132,23 +135,25 @@ public class RequestClassDelegation {
             httpMetricsData.setHttpStatus(httpStatus + "");
             // 获取响应体
             // 首先判断是否已经被BufferingClientHttpResponseWrapper 包装过
-            if(!responseClz.isAssignableFrom(TargetAppClassRegistry.getClass(ClassNames.RT_BUFFER_RESPONSE_CLASS_NAME))) {
-                //转换成 BufferingClientHttpResponseWrapper
+            if (!responseClz
+                    .isAssignableFrom(TargetAppClassRegistry.getClass(ClassNames.RT_BUFFER_RESPONSE_CLASS_NAME))) {
+                // 转换成 BufferingClientHttpResponseWrapper
                 if (privateConstructor == null) {
                     privateConstructor = TargetAppClassRegistry.getClass(ClassNames.RT_BUFFER_RESPONSE_CLASS_NAME)
-                    .getDeclaredConstructor(TargetAppClassRegistry.getClass(ClassNames.RT_BASIC_RESPONSE_CLASS_NAME));
+                            .getDeclaredConstructor(
+                                    TargetAppClassRegistry.getClass(ClassNames.RT_BASIC_RESPONSE_CLASS_NAME));
                     privateConstructor.setAccessible(true);
                 }
                 response = privateConstructor.newInstance(response);
             }
-            //直接获取 body
+            // 直接获取 body
             InputStream is = ReflectMethods.invokeMethod(response.getClass(), MethodNames.GET_BODY_METHOD, response);
             byte[] bodyBytes = StreamUtils.copyToByteArray(is);
             httpMetricsData.setResponseBody(new String(bodyBytes));
             httpMetricsData.setHttpStatus(httpStatus + "");
             MetricsEvent<HttpMetricsData> event = new MetricsEvent<HttpMetricsData>();
             event.setEventData(httpMetricsData);
-            EventReporterHolder.getEventReporter().asyncReport(event); 
+            EventReporterHolder.getEventReporter().asyncReport(event);
             httpMetricsDataThreadLocal.remove();
         } catch (Exception e) {
             System.err.println("[dome agent] Failed to wrap Resttemplate request: " + e.getMessage());

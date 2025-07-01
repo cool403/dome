@@ -35,31 +35,31 @@ public class DynamicResponseInstanceBuilder {
         Object httpStatus = loadHttpStatus(statusCode);
         Object httpHeaders = createHttpHeaders();
         Object mediaType = getMediaType(contentType);
-        
+
         // 设置headers
         Method setContentType = httpHeaders.getClass().getMethod("setContentType", mediaType.getClass());
         setContentType.invoke(httpHeaders, mediaType);
-        
+
         // 创建动态代理实现ClientHttpResponse接口
         Class<?> clientHttpResponseClass = TargetAppClassRegistry.getClass(ClassNames.RT_BASIC_RESPONSE_CLASS_NAME);
-        return Proxy.newProxyInstance(ClassloaderRegistry.getTargetAppClassLoader(),new Class[]{clientHttpResponseClass},(proxy, method, args) -> {
-                switch (method.getName()) {
-                    case "getStatusCode":
-                        return httpStatus;
-                    case "getRawStatusCode":
-                        return statusCode;
-                    case "getStatusText":
-                        return httpStatus.getClass().getMethod("getReasonPhrase").invoke(httpStatus);
-                    case "getBody":
-                        return new java.io.ByteArrayInputStream(body.getBytes());
-                    case "getHeaders":
-                        return httpHeaders;
-                    case "close":
-                        return null;
-                    default:
-                        throw new UnsupportedOperationException();
-                }
-            }
-        );
+        return Proxy.newProxyInstance(ClassloaderRegistry.getTargetAppClassLoader(),
+                new Class[] { clientHttpResponseClass }, (proxy, method, args) -> {
+                    switch (method.getName()) {
+                        case "getStatusCode":
+                            return httpStatus;
+                        case "getRawStatusCode":
+                            return statusCode;
+                        case "getStatusText":
+                            return httpStatus.getClass().getMethod("getReasonPhrase").invoke(httpStatus);
+                        case "getBody":
+                            return new java.io.ByteArrayInputStream(body.getBytes());
+                        case "getHeaders":
+                            return httpHeaders;
+                        case "close":
+                            return null;
+                        default:
+                            throw new UnsupportedOperationException();
+                    }
+                });
     }
 }
