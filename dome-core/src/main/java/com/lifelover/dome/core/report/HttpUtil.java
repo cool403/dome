@@ -161,9 +161,8 @@ public class HttpUtil {
         }
         // 读取错误流
         try (InputStream err = connection.getErrorStream();
-                BufferedReader reader = new BufferedReader(
-                        new InputStreamReader(err != null ? err : connection.getInputStream(),
-                                StandardCharsets.UTF_8))) {
+                BufferedReader reader = new BufferedReader(new InputStreamReader(
+                        err != null ? err : connection.getInputStream(), StandardCharsets.UTF_8))) {
             StringBuilder errorResponse = new StringBuilder();
             String line;
             while ((line = reader.readLine()) != null) {
