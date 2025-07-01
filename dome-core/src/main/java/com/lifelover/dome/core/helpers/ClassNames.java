@@ -37,5 +37,6 @@ public class ClassNames {
     public static final String RT_BUFFER_RESPONSE_CLASS_NAME="org.springframework.http.client.BufferingClientHttpResponseWrapper";
     public static final String RT_BASIC_RESPONSE_CLASS_NAME="org.springframework.http.client.ClientHttpResponse";
     public static final String RT_MOCK_RESPONSE_CLASS_NAME="org.springframework.mock.http.client.MockClientHttpResponse";
-    
+    public static final String RT_HTTP_STATUS_CLASS_NAME="org.springframework.http.HttpStatus";
+    public static final String RT_MEDIA_TYPE_CLASS_NAME="org.springframework.http.MediaType";
 }

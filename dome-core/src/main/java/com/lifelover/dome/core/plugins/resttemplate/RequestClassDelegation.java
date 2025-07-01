@@ -23,12 +23,6 @@ public class RequestClassDelegation {
 
     public static volatile Constructor<?> privateConstructor = null;
 
-    private static final String SET_RAW_STATUS_METHOD = "setRawStatusCode";
-    private static final String SET_BODY_METHOD = "setBody";
-    private static final String SET_METHOD = "set";
-    private static final String SET_HEADERS_METHOD = "setHeaders";
-    private static final String INPUT_STREAM_CLASS_NAME = "java.io.ByteArrayInputStream";
-
     /**
      * 拦截器，返回为true，就不会真实调用，为false就会真实调用，适合mock工具开发
      * @param call
