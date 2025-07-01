@@ -4,6 +4,7 @@ import com.lifelover.dome.core.config.ConfigLoader;
 import com.lifelover.dome.db.core.DbAccess;
 import com.lifelover.dome.db.entity.ApiConfigs;
 import com.lifelover.dome.db.entity.ApiRecords;
+import com.lifelover.dome.db.helper.MockType;
 
 public class ApiMockInterceptor {
 
@@ -40,6 +41,22 @@ public class ApiMockInterceptor {
             System.out.println("[dome agent] 当前接口未开启mock");
             return null;
         }
-        return apiConfig.getReplayApiRecords();
+        String mockType = apiConfig.getMockType();
+        //判断是否是REPLAY
+        if (MockType.REPLAY.name().equals(mockType)) {
+            return apiConfig.getReplayApiRecords();
+        }
+        //静态响应
+        if (MockType.STATIC.name().equals(mockType)) {
+            ApiRecords apiRecords = new ApiRecords();
+            apiRecords.setResponseBody(apiConfig.getStaticResponse());
+            return apiRecords;
+        }
+        //动态响应，就是执行一段脚本
+        if (MockType.DYNAMIC.name().equals(mockType)) {
+            //todo   
+        }
+        System.err.println("[dome agent] 未支持的mock类型: " + mockType);
+        return null;
     }
 }
