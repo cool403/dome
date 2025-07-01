@@ -6,8 +6,9 @@ public interface OkhttpAdapter {
     /**
      * 
      * @param call
+     * @return 
      */
-    void beforeCall(Object call);
+    Object beforeCall(Object call);
 
     /**
      * 

@@ -21,6 +21,9 @@ public class ClassNames {
     public static final String RESPONSE_CLASS_NAME = "okhttp3.Response";
     public static final String RESPONSE_BODY_CLASS_NAME = "okhttp3.ResponseBody";
     public static final String OKIO_BUFFERED_SINK_CLASS_NAME = "okio.BufferedSink";
+    public static final String OK_RESPONSE_BUILDER_CLASS_NAME = "okhttp3.Response$Builder";
+    public static final String OK_REQUEST_CLASS_NAME = "okhttp3.Request";
+    public static final String OK_PROTOCOL_CLASS_NAME = "okhttp3.Protocol";
 
 
     /////////feign////////////

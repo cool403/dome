@@ -11,18 +11,9 @@ import com.lifelover.dome.core.report.HttpMetricsData;
 public class Okhttp4Adapter extends AbstractOkHttpAdapter {
 
     @Override
-    protected HttpMetricsData initHttpMetricsData(Object call) throws Exception {
-        Class<?> callClz = call.getClass();
+    protected HttpMetricsData initHttpMetricsData(Object call, Object originalRequest) throws Exception {
         Class<?> bufferClz = TargetAppClassRegistry.getClass(ClassNames.BUFFER_CLASS_NAME);
-        // 获取请求
-        Object originalRequest = ReflectMethods.invokeMethod(callClz, MethodNames.REQUEST_METHOD, call);
-        if (originalRequest == null) {
-            return null;
-        }
         Class<?> originalRequestClz = originalRequest.getClass();
-
-        // 获取请求头
-        Object headers = ReflectMethods.invokeMethod(originalRequestClz, MethodNames.HEADERS_METHOD, originalRequest);
         // 获取请求方法
         String method = ReflectMethods.invokeMethod(originalRequestClz, MethodNames.METHOD_METHOD, originalRequest);
         // 获取请求url
