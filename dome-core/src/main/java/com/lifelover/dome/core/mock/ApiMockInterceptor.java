@@ -1,12 +1,28 @@
 package com.lifelover.dome.core.mock;
 
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+
 import com.lifelover.dome.core.config.ConfigLoader;
+import com.lifelover.dome.core.helpers.JsonUtil;
 import com.lifelover.dome.db.core.DbAccess;
 import com.lifelover.dome.db.entity.ApiConfigs;
 import com.lifelover.dome.db.entity.ApiRecords;
 import com.lifelover.dome.db.helper.MockType;
 
 public class ApiMockInterceptor {
+
+    private static ScriptEngine scriptEngine = null;
+
+    static {
+        try {
+            //这里一定要加try catch，否则会报错，jdk11开始nashorn被移除
+            scriptEngine = new ScriptEngineManager().getEngineByName("nashorn");
+        } catch (Exception e) {
+            System.err.println("[dome agent] 初始化scriptEngine失败, 确认jdk版本是否大于11");
+            e.printStackTrace();
+        }
+    }
 
     private  ApiMockInterceptor(){
 
@@ -53,8 +69,20 @@ public class ApiMockInterceptor {
             return apiRecords;
         }
         //动态响应，就是执行一段脚本
-        if (MockType.DYNAMIC.name().equals(mockType)) {
-            //todo   
+        if (MockType.DYNAMIC.name().equals(mockType) && scriptEngine != null) {
+            ApiRecords apiRecords = new ApiRecords();
+            String dynamicResponse = apiConfig.getDynamicRule();
+            try {
+                //设置上下文
+                scriptEngine.put("params", apiMockContext);
+                Object result = scriptEngine.eval(dynamicResponse);
+                //默认返回json
+                apiRecords.setResponseBody(JsonUtil.toJson(result));
+            } catch (Exception e) {
+                System.err.println("[dome agent] 执行动态脚本失败: " + e.getMessage());
+                e.printStackTrace();
+            }
+            return apiRecords;
         }
         System.err.println("[dome agent] 未支持的mock类型: " + mockType);
         return null;
