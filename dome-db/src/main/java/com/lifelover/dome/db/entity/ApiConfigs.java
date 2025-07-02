@@ -1,11 +1,11 @@
 package com.lifelover.dome.db.entity;
 
-
 import java.util.Date;
 
 public class ApiConfigs {
     private Long id;
     private String httpUrl;
+    private String host;
     private String httpMethod;
     private String isMockEnabled;
     private String mockType;
@@ -14,11 +14,20 @@ public class ApiConfigs {
     private String replayRecordId;
     private String delay;
     private String description;
+    private String apiType;
 
     private Date createdAt;
     private Date updatedAt;
 
     private ApiRecords replayApiRecords;
+
+    public String getApiType() {
+        return apiType;
+    }
+
+    public void setApiType(String apiType) {
+        this.apiType = apiType;
+    }
 
     public ApiRecords getReplayApiRecords() {
         return replayApiRecords;
@@ -38,6 +47,14 @@ public class ApiConfigs {
 
     public String getHttpUrl() {
         return httpUrl;
+    }
+
+    public String getHost() {
+        return host;
+    }
+
+    public void setHost(String host) {
+        this.host = host;
     }
 
     public void setHttpUrl(String httpUrl) {

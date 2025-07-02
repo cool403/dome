@@ -16,7 +16,16 @@ public class ApiRecords {
     private String httpStatus;
     private String headers;
     private String responseHeaders;
+    private String apiType;
     private Date createdAt;
+
+    public String getApiType() {
+        return apiType;
+    }
+
+    public void setApiType(String apiType) {
+        this.apiType = apiType;
+    }
 
     public Long getId() {
         return id;
