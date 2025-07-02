@@ -129,7 +129,6 @@ public class HttpUtil {
     /**
      * 创建HTTP连接
      */
-    @SuppressWarnings("deprecation")
     private static HttpURLConnection createConnection(String url, String method,
             int connectTimeout, int readTimeout) throws IOException {
         URL urlObj = new URL(url);

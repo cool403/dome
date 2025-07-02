@@ -20,7 +20,7 @@ public final class CreateTable {
                 "    http_status TEXT,\r\n" + //
                 "    headers TEXT,  -- 可以存储JSON格式的请求/响应头\r\n" + //
                 "    response_headers TEXT,\r\n" + //
-                "    api_type text CHECK (api_type IN ('INTERNAL', 'EXTERNAL')),\r\n" + //
+                "    api_type text CHECK (api_type IN ('INT', 'EXT')),\r\n" + //
                 "    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP\r\n" + //
                 ");\r\n" + //
                 "\r\n" + //
@@ -38,7 +38,7 @@ public final class CreateTable {
                 "    replay_record_id INTEGER,  -- 当mock_type为REPLAY时，关联到request_records表的id\r\n" + //
                 "    delay INTEGER DEFAULT 0,  -- 模拟延迟，毫秒\r\n" + //
                 "    description TEXT,  -- 接口描述\r\n" + //
-                "    api_type text CHECK (api_type IN ('INTERNAL', 'EXTERNAL')),\r\n" + //
+                "    api_type text CHECK (api_type IN ('INT', 'EXT')), --- INT服务本身提供的接口, EXT调用外部的接口\r\n" + //
                 "    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,\r\n" + //
                 "    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\r\n" + //
                 "    UNIQUE (http_url, http_method, api_type)  -- 确保URL+Method组合唯一\r\n" + //

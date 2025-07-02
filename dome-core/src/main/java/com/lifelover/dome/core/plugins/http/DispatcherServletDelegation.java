@@ -72,6 +72,7 @@ public class DispatcherServletDelegation {
             apiMockContext.setContentType(contentType);
             apiMockContext.setHttpMethod(httpMethod);
             apiMockContext.setHttpUrl(requestUri);
+            apiMockContext.setApiType("INT");
             ApiRecords apiRecords = ApiMockInterceptor.mock(apiMockContext);
             //只考虑返回也是json
             if (apiRecords != null) {
@@ -140,7 +141,7 @@ public class DispatcherServletDelegation {
             int httpStatus = ReflectMethods.invokeMethod(responseClass, MethodNames.GET_STATUS_METHOD, response);
             // 获取queryString
             metricsData.setHttpStatus(httpStatus + "");
-            metricsData.setMetricType("server");
+            metricsData.setApiType("INT");
             metricsData.setTraceId(traceId);
             metricsData.setRespTime(System.currentTimeMillis());
             String queryStringParams = ReflectMethods.invokeMethod(requestClass, MethodNames.GET_QUERY_STRING_METHOD, request);

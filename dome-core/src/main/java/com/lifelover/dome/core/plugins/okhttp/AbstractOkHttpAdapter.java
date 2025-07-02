@@ -31,7 +31,7 @@ public abstract class AbstractOkHttpAdapter implements OkhttpAdapter {
             if (httpMetricsData == null) {
                 return null;
             }
-            httpMetricsData.setMetricType("client");
+            httpMetricsData.setApiType("EXT");
             httpMetricsDataThreadLocal.set(httpMetricsData);
             return getMockResponse(httpMetricsData, originalRequest);
         } catch (Exception e) {
@@ -52,6 +52,7 @@ public abstract class AbstractOkHttpAdapter implements OkhttpAdapter {
         ApiMockContext apiMockContext = new ApiMockContext();
         apiMockContext.setHttpMethod(httpMethod);
         apiMockContext.setHttpUrl(httpUrl);
+        apiMockContext.setApiType("EXT");
         ApiRecords apiRecords = ApiMockInterceptor.mock(apiMockContext);
         if (apiRecords != null) {
             try {

@@ -2,6 +2,7 @@ package com.lifelover.dome.db.core;
 
 import com.lifelover.dome.db.entity.ApiConfigs;
 import com.lifelover.dome.db.entity.ApiRecords;
+import com.lifelover.dome.db.helper.ApiType;
 
 public interface DbAccess {
 
@@ -30,8 +31,9 @@ public interface DbAccess {
      * 获取api配置
      * @param httpUrl
      * @param httpMethod
+     * @param apiType
      * @return
      */
-    ApiConfigs getApiConfig(String httpUrl, String httpMethod);
+    ApiConfigs getApiConfig(String httpUrl, String httpMethod, ApiType apiType);
 
 }

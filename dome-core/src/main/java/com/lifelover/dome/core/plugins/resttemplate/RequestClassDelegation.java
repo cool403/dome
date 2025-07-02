@@ -44,7 +44,7 @@ public class RequestClassDelegation {
             HttpMetricsData httpMetricsData = new HttpMetricsData();
             final Long now = System.currentTimeMillis();
             httpMetricsData.setReqTime(now);
-            httpMetricsData.setMetricType("client");
+            httpMetricsData.setApiType("EXT");
 
             // 获取请求信息
             Class<?> reqClz = call.getClass();
@@ -61,7 +61,7 @@ public class RequestClassDelegation {
             apiMockContext.setHttpUrl(httpUrl);
             apiMockContext.setHttpMethod(httpMethod);
             apiMockContext.setContentType(contentType);
-
+            apiMockContext.setApiType("EXT");
             // 判断是否需要mock
             ApiRecords apiRecords = ApiMockInterceptor.mock(apiMockContext);
             if (apiRecords != null) {

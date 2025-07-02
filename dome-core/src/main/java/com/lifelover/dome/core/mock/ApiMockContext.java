@@ -8,6 +8,16 @@ public class ApiMockContext {
 
     private String contentType;
 
+    private String apiType;
+
+    public String getApiType() {
+        return apiType;
+    }
+
+    public void setApiType(String apiType) {
+        this.apiType = apiType;
+    }
+
     public String getContentType() {
         return contentType;
     }

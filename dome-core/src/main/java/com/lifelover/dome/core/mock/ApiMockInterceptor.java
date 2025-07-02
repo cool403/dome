@@ -8,6 +8,7 @@ import com.lifelover.dome.core.helpers.JsonUtil;
 import com.lifelover.dome.db.core.DbAccess;
 import com.lifelover.dome.db.entity.ApiConfigs;
 import com.lifelover.dome.db.entity.ApiRecords;
+import com.lifelover.dome.db.helper.ApiType;
 import com.lifelover.dome.db.helper.MockType;
 
 public class ApiMockInterceptor {
@@ -48,7 +49,7 @@ public class ApiMockInterceptor {
         if (dbAccess == null) {
             return null;
         }
-        ApiConfigs apiConfig = dbAccess.getApiConfig(httpUrl, httpMethod);
+        ApiConfigs apiConfig = dbAccess.getApiConfig(httpUrl, httpMethod, ApiType.of(apiMockContext.getApiType()));
         // 没配置api信息的也不做mock处理
         if (apiConfig == null) {
             System.err.println("[dome agent] 没有找到对应的api信息, 不进行mock");

@@ -38,6 +38,7 @@ public class DbEventReporter extends AbstractEventReporter {
         // apiRecords.setMetricTime(httpMetricsData.getMetricTime());
         // apiRecords.setMetricType(httpMetricsData.getMetricType());
         apiRecords.setTraceId(httpMetricsData.getTraceId());
+        apiRecords.setApiType(httpMetricsData.getApiType());
         apiRecords.setCreatedAt(now);
         return apiRecords;
     }

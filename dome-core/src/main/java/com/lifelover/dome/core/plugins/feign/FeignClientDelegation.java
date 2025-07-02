@@ -53,6 +53,7 @@ public class FeignClientDelegation {
             ApiMockContext apiMockContext = new ApiMockContext();
             apiMockContext.setHttpMethod(httpMethod);
             apiMockContext.setHttpUrl(httpUrl);
+            apiMockContext.setApiType("EXT");
             ApiRecords apiRecords = ApiMockInterceptor.mock(apiMockContext);
             if (apiRecords != null) {
                 System.out.println(
@@ -83,7 +84,7 @@ public class FeignClientDelegation {
             httpMetricsData.setHttpUrl(httpUrl);
             httpMetricsData.setHttpMethod(httpMethod);
             httpMetricsData.setReqTime(now);
-            httpMetricsData.setMetricType("client");
+            httpMetricsData.setApiType("EXT");
             if (reqBytes != null) {
                 httpMetricsData.setRequestBody(new String(reqBytes, StandardCharsets.UTF_8));
             }

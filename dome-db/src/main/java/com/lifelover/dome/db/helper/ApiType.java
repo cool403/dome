@@ -13,4 +13,8 @@ public enum ApiType {
     public String getDescription() {
         return description;
     }
+
+    public static ApiType of(String name){
+        return valueOf(name.toUpperCase());
+    }
 }

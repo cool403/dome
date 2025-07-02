@@ -4,10 +4,6 @@ import com.lifelover.dome.db.ext.DateArgumentFactory;
 import com.lifelover.dome.db.ext.DateColumnMapper;
 import org.jdbi.v3.core.Jdbi;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
-
 public class DbConfig {
     private static  final String JDBC_URL = "jdbc:sqlite:%s";
     private final Jdbi jdbi;

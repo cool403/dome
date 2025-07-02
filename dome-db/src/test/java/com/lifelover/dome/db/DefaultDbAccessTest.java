@@ -2,7 +2,6 @@ package com.lifelover.dome.db;
 
 import com.lifelover.dome.db.core.DbConfig;
 import com.lifelover.dome.db.core.DefaultDbAccess;
-import com.lifelover.dome.db.entity.ApiConfigs;
 import com.lifelover.dome.db.entity.ApiRecords;
 
 import java.util.Date;
