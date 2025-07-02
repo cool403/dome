@@ -9,7 +9,6 @@ import org.jdbi.v3.core.Jdbi;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.Date;
 import java.util.Optional;
 
