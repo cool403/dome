@@ -102,26 +102,11 @@ java -javaagent:path/to/dome-core.jar=debug=true,interval=5000 -jar your-app.jar
 4. 数据上报为异步操作，不影响主业务流程
 
 ## 依赖信息
-### 主要依赖
-1. **字节码操作**
-   - `byte-buddy`: 1.10.22
-     - 用于实现字节码插桩功能
-
-2. **JSON处理**
-   - `gson`: 2.13.1
-     - 用于JSON数据的序列化和反序列化
-
-3. **数据库**
-   - `jdbi3-core`: 3.39.1
-     - SQL查询构建和执行工具
-   - `sqlite-jdbc`: 3.50.1.0
-     - SQLite数据库驱动
-
-4. **构建工具**
-   - `maven-assembly-plugin`: 3.3.0
-     - 用于打包包含依赖的JAR文件
-   - `maven-shade-plugin`: 3.3.0
-     - 用于处理依赖冲突和重定位类
-
-### 依赖管理
-项目使用Maven进行依赖管理，所有模块的依赖版本都由父POM统一管理，确保版本一致性。
+- 字节码操作: byte-buddy 1.10.22
+- JSON处理: gson 2.13.1
+- 数据库: 
+  - jdbi3-core 3.39.1
+  - sqlite-jdbc 3.50.1.0
+- 构建工具: 
+  - maven-assembly-plugin 3.3.0
+  - maven-shade-plugin 3.3.0
