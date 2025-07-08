@@ -78,6 +78,7 @@ public class ApiMockInterceptor {
             try {
                 // 设置上下文
                 scriptEngine.put("params", apiMockContext);
+                // js脚本返回的应该是一个js对象{}
                 Object result = scriptEngine.eval(dynamicResponse);
                 // 默认返回json
                 apiRecords.setResponseBody(JsonUtil.toJson(result));
