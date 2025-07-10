@@ -1,7 +1,5 @@
 package com.lifelover.dome.core.plugins.okhttp;
 
-import java.lang.reflect.Method;
-
 import com.lifelover.dome.core.helpers.ClassNames;
 import com.lifelover.dome.core.helpers.MethodNames;
 import com.lifelover.dome.core.helpers.ReflectMethods;
@@ -28,8 +26,8 @@ public class Okhttp4Adapter extends AbstractOkHttpAdapter {
             if (requestBody != null && bufferClz != null) {
                 Class<?> requestBodyClz = requestBody.getClass();
                 // 获取contentType
-                Object contentType = ReflectMethods.invokeMethod(requestBodyClz, MethodNames.CONTENT_TYPE_METHOD,
-                        requestBody);
+                // Object contentType = ReflectMethods.invokeMethod(requestBodyClz, MethodNames.CONTENT_TYPE_METHOD,
+                        // requestBody);
                 Object buffer = bufferClz.getConstructor().newInstance();
                 ReflectMethods.invokeMethod(requestBodyClz, MethodNames.WRITE_TO_METHOD, new Class[] { bufferSinkClz },
                         requestBody, buffer);
@@ -37,20 +35,20 @@ public class Okhttp4Adapter extends AbstractOkHttpAdapter {
                 byte[] bytes = ReflectMethods.invokeMethod(bufferClz, MethodNames.READ_BYTES_ARRAY_METHOD, buffer);
                 // 记录请求体
                 httpMetricsData.setRequestBody(new String(bytes));
-                Class<?> mediaTypeClz = TargetAppClassRegistry.getClass(ClassNames.MEDIA_TYPE_CLASS_NAME);
-                Method createMethod = ReflectMethods.getMethod(requestBodyClz, MethodNames.CREATE_METHOD, mediaTypeClz,
-                        byte[].class);
-                Object newRequestBody = createMethod.invoke(null, contentType, bytes);
-                Object newRequestBuilder = ReflectMethods.invokeMethod(originalRequestClz,
-                        MethodNames.NEW_BUILDER_METHOD, originalRequest);
-                Class<?> newRequestBuilderClz = newRequestBuilder.getClass();
-                newRequestBuilder = ReflectMethods.invokeMethod(newRequestBuilderClz, MethodNames.METHOD_METHOD,
-                        new Class[] { String.class, requestBodyClz.getSuperclass() }, newRequestBuilder, method,
-                        newRequestBody);
-                Object newRequest = ReflectMethods.invokeMethod(newRequestBuilderClz, MethodNames.BUILD_METHOD,
-                        newRequestBuilder);
+                // Class<?> mediaTypeClz = TargetAppClassRegistry.getClass(ClassNames.MEDIA_TYPE_CLASS_NAME);
+                // Method createMethod = ReflectMethods.getMethod(requestBodyClz, MethodNames.CREATE_METHOD, mediaTypeClz,
+                        // byte[].class);
+                // Object newRequestBody = createMethod.invoke(null, contentType, bytes);
+                // Object newRequestBuilder = ReflectMethods.invokeMethod(originalRequestClz,
+                        // MethodNames.NEW_BUILDER_METHOD, originalRequest);
+                // Class<?> newRequestBuilderClz = newRequestBuilder.getClass();
+                // newRequestBuilder = ReflectMethods.invokeMethod(newRequestBuilderClz, MethodNames.METHOD_METHOD,
+                        // new Class[] { String.class, requestBodyClz.getSuperclass() }, newRequestBuilder, method,
+                        // newRequestBody);     
+                // Object newRequest = ReflectMethods.invokeMethod(newRequestBuilderClz, MethodNames.BUILD_METHOD,
+                        // newRequestBuilder);
                 // 3. 替换原始Request（通过反射修改字段）
-                ReflectMethods.setFieldValue(call, "originalRequest", newRequest);
+                // ReflectMethods.setFieldValue(call, "originalRequest", newRequest);
             }
         }
         httpMetricsData.setHttpMethod(method);
