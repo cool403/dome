@@ -62,6 +62,8 @@ public class Okhttp4Adapter extends AbstractOkHttpAdapter {
     @Override
     protected Object fullFillHttpMetricsData(HttpMetricsData httpMetricsData, Object response) {
         Class<?> responseClz = response.getClass();
+        //获取请求头
+        String contentType = ReflectMethods.invokeMethod(responseClz, MethodNames.HEADER_METHOD, new Class[] { String.class }, response, "content-type");
         // 获取响应状态码
         Object code = ReflectMethods.invokeMethod(responseClz, MethodNames.CODE_METHOD, response);
         httpMetricsData.setHttpStatus(code.toString());
