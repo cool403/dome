@@ -17,8 +17,7 @@ public class RealCallDelegation {
 
     @Advice.OnMethodExit(onThrowable = Throwable.class)
     public static void onMethodExit(@Advice.This Object call, @Advice.Enter Object fixedValue,
-            @Advice.Return(readOnly = false, typing = Assigner.Typing.DYNAMIC) Object response,
-            @Advice.Thrown Throwable throwable) {
+            @Advice.Return(readOnly = false, typing = Assigner.Typing.DYNAMIC) Object response) {
         OkhttpAdapter adapter = OkhttpAdapterHolder.getOkhttpAdapter();
         if (adapter == null) {
             return;
@@ -27,7 +26,7 @@ public class RealCallDelegation {
             response = fixedValue;
             return;
         }
-        Object newResponse = adapter.afterCall(response, throwable);
+        Object newResponse = adapter.afterCall(response, null);
         if (newResponse != null) {
             response = newResponse;
         }

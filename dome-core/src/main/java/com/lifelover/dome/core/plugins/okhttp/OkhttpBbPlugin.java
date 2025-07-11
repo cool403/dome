@@ -16,8 +16,8 @@ public class OkhttpBbPlugin extends AbstractBbPlugin {
 
     @Override
     protected AgentBuilder wrap(AgentBuilder agentBuilder) {
-        return agentBuilder.type(ElementMatchers.hasSuperType(ElementMatchers.named(ClassNames.REAL_CALL_CLASS_NAME))
-                .and(ElementMatchers.not(ElementMatchers.isAbstract())))
+        return agentBuilder.type(ElementMatchers.hasSuperType(ElementMatchers.named(ClassNames.REAL_CALL_CLASS_NAME)))
+                // .and(ElementMatchers.not(ElementMatchers.isAbstract())))
                 .transform(new BbTransformer() {
                     @Override
                     protected Builder<?> build(Builder<?> builder, TypeDescription typeDescription,

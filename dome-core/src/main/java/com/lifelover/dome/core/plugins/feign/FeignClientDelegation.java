@@ -99,8 +99,8 @@ public class FeignClientDelegation {
     @Advice.OnMethodExit(onThrowable = Throwable.class)
     public static void onMethodExit(
             @Advice.Enter Object fixedValue,
-            @Advice.Return(readOnly = false, typing = Assigner.Typing.DYNAMIC) Object response,
-            @Advice.Thrown Throwable throwable)
+            @Advice.Return(readOnly = false, typing = Assigner.Typing.DYNAMIC) Object response)
+            // @Advice.Thrown Throwable throwable)
             throws Exception {
         if (fixedValue != null) {
             response = fixedValue;
@@ -116,14 +116,14 @@ public class FeignClientDelegation {
             httpMetricsData.setMetricTime(now);
             httpMetricsData.setRespTime(now);
             // 调用直接报错
-            if (throwable != null) {
-                httpMetricsData.setHttpStatus("ERR");
-                httpMetricsData.setResponseBody(throwable.getMessage());
-                MetricsEvent<HttpMetricsData> event = new MetricsEvent<HttpMetricsData>();
-                event.setEventData(httpMetricsData);
-                EventReporterHolder.getEventReporter().asyncReport(event);
-                return;
-            }
+            // if (throwable != null) {
+            //     httpMetricsData.setHttpStatus("ERR");
+            //     httpMetricsData.setResponseBody(throwable.getMessage());
+            //     MetricsEvent<HttpMetricsData> event = new MetricsEvent<HttpMetricsData>();
+            //     event.setEventData(httpMetricsData);
+            //     EventReporterHolder.getEventReporter().asyncReport(event);
+            //     return;
+            // }
 
             Class<?> resClz = response.getClass();
             final int httpStatus = ReflectMethods.invokeMethod(resClz, MethodNames.FEIGN_STATUS_METHOD, response);

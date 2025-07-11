@@ -16,8 +16,8 @@ public class FeignPlugin extends AbstractBbPlugin {
     @Override
     protected AgentBuilder wrap(AgentBuilder agentBuilder) {
         return agentBuilder
-                .type(ElementMatchers.hasSuperType(ElementMatchers.named(ClassNames.FEIGN_CLIENT_CLASS_NAME))
-                        .and(ElementMatchers.not(ElementMatchers.isAbstract())))
+                .type(ElementMatchers.hasSuperType(ElementMatchers.named(ClassNames.FEIGN_CLIENT_CLASS_NAME)))
+                        // .and(ElementMatchers.not(ElementMatchers.isAbstract())))
                 .transform(new BbTransformer() {
 
                     @Override
