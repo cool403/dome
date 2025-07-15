@@ -15,7 +15,7 @@ public class ClassNames {
 
 
     ////////////okhttp////////
-    public static final String REAL_CALL_CLASS_NAME = "okhttp3.Call";
+    public static final String REAL_CALL_CLASS_NAME = "okhttp3.internal.connection.RealCall";
     public static final String BUFFER_CLASS_NAME = "okio.Buffer";
     public static final String MEDIA_TYPE_CLASS_NAME = "okhttp3.MediaType";
     public static final String RESPONSE_CLASS_NAME = "okhttp3.Response";
