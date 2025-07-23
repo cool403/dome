@@ -59,7 +59,7 @@ class MockApp:
         self.root.geometry("1200x800")
 
         # 设置Sun Valley主题
-        sv_ttk.set_theme("light")  # 使用浅色主题
+        sv_ttk.set_theme("dark")  # 使用浅色主题
 
         # 数据库连接
         self.db_conn = None
