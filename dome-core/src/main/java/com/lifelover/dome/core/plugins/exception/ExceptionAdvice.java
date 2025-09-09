@@ -7,19 +7,20 @@ import com.lifelover.dome.core.report.ReportType;
 import net.bytebuddy.asm.Advice;
 
 public class ExceptionAdvice {
+    public static final ThreadLocal<MethodContext> CONTEXT = new ThreadLocal<>();
     
     @Advice.OnMethodEnter
     public static void onEnter(@Advice.Origin String method,
                              @Advice.AllArguments Object[] args) {
         // 保存方法入口信息到线程上下文
         MethodContext context = new MethodContext(method, args);
-        ThreadLocalContext.set(context);
+        CONTEXT.set(context);
     }
     
     @Advice.OnMethodExit(onThrowable = Throwable.class)
     public static void onExit(@Advice.Thrown Throwable throwable) {
         if (throwable != null) {
-            MethodContext context = ThreadLocalContext.get();
+            MethodContext context = CONTEXT.get();
             if (context != null) {
                 ExceptionEvent event = new ExceptionEvent(
                     context.getMethodName(),
@@ -38,40 +39,7 @@ public class ExceptionAdvice {
                 }
             }
         }
-        ThreadLocalContext.clear();
+        CONTEXT.remove();
     }
-    
-    private static class MethodContext {
-        private final String methodName;
-        private final Object[] arguments;
-        
-        public MethodContext(String methodName, Object[] arguments) {
-            this.methodName = methodName;
-            this.arguments = arguments != null ? arguments.clone() : null;
-        }
-        
-        public String getMethodName() {
-            return methodName;
-        }
-        
-        public Object[] getArguments() {
-            return arguments;
-        }
-    }
-    
-    private static class ThreadLocalContext {
-        private static final ThreadLocal<MethodContext> CONTEXT = new ThreadLocal<>();
-        
-        public static void set(MethodContext context) {
-            CONTEXT.set(context);
-        }
-        
-        public static MethodContext get() {
-            return CONTEXT.get();
-        }
-        
-        public static void clear() {
-            CONTEXT.remove();
-        }
-    }
+
 }
