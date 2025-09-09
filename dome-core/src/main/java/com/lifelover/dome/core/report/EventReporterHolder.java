@@ -14,6 +14,7 @@ public class EventReporterHolder {
         private static final EventReporter INSTANCE1 = new HttpEventReporter();
         private static final EventReporter INSTANCE2 = new ConsoleEventReporter();
         private static final EventReporter INSTANCE3 = new DbEventReporter();
+        private static final EventReporter INSTANCE4 = new ExceptionEventReporter();
     }
 
     /**
@@ -28,6 +29,17 @@ public class EventReporterHolder {
         if (ReportType.DB.name().equals(reporterType)) {
             return __EventReporterHolder.INSTANCE3;
         }
-        return __EventReporterHolder.INSTANCE1;
+        if (ReportType.HTTP.name().equals(reporterType)) {
+            return __EventReporterHolder.INSTANCE1;
+        }
+        // 默认使用异常专用报告器
+        return __EventReporterHolder.INSTANCE4;
+    }
+    
+    /**
+     * 获取异常专用报告器
+     */
+    public static EventReporter getExceptionReporter() {
+        return __EventReporterHolder.INSTANCE4;
     }
 }

@@ -20,6 +20,8 @@ public class AgentConfig {
 
     private DbAccess dbAccess = null;
 
+    private final List<String> exceptionMonitorPackages = new ArrayList<>();
+
     public AgentConfig() {
         // 先简单支持后缀匹配,后续支持antUrlMatch
         ignoreUrls.add("/error");
@@ -77,5 +79,13 @@ public class AgentConfig {
 
     public DbAccess getDbAccess() {
         return dbAccess;
+    }
+
+    public List<String> getExceptionMonitorPackages() {
+        return exceptionMonitorPackages;
+    }
+
+    public void addExceptionMonitorPackages(List<String> packages) {
+        this.exceptionMonitorPackages.addAll(packages);
     }
 }

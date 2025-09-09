@@ -34,6 +34,14 @@ public class ConfigLoader {
                 System.out.println("[dome agent] repoortType=DB时，会进行db初始化");
                 agentConfig.initDbAccess(paramMap);
             }
+            
+            // 加载异常监控包配置
+            String exceptionPackages = getEnvValue(paramMap, EnvNames.ENV_EXCEPTION_PACKAGES);
+            if (exceptionPackages != null && !exceptionPackages.isEmpty()) {
+                List<String> packages = Arrays.asList(exceptionPackages.split(","));
+                agentConfig.addExceptionMonitorPackages(packages);
+                System.out.println("[dome agent] 异常监控包配置: " + packages);
+            }
         }
     }
 
