@@ -1,7 +1,6 @@
 package com.lifelover.dome.core.report;
 
 import com.lifelover.dome.core.plugins.exception.ExceptionEvent;
-import com.lifelover.dome.core.helpers.JsonUtil;
 
 @SuppressWarnings("rawtypes")
 public class ExceptionEventReporter extends AbstractEventReporter {
