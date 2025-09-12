@@ -12,6 +12,7 @@ public class ExceptionAdvice {
     @Advice.OnMethodEnter
     public static void onEnter(@Advice.Origin String method,
             @Advice.AllArguments Object[] args) {
+        System.out.println("method------------------"+ method);
         CONTEXT.remove();
         // 保存方法入口信息到线程上下文
         MethodContext context = new MethodContext(method, args);
@@ -27,7 +28,7 @@ public class ExceptionAdvice {
         if (context == null) {
             return;
         }
-        System.out.print("222222222222222222222222222");
+        System.out.println("222222222222222222222222222");
         ExceptionEvent event = new ExceptionEvent(
                 context.getMethodName(),
                 context.getArguments(),
