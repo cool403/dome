@@ -98,6 +98,7 @@ public class FeignClientDelegation {
 
     @Advice.OnMethodExit(onThrowable = Throwable.class)
     public static void onMethodExit(
+            @Advice.Thrown Throwable t,
             @Advice.Enter Object fixedValue,
             @Advice.Return(readOnly = false, typing = Assigner.Typing.DYNAMIC) Object response)
             // @Advice.Thrown Throwable throwable)
@@ -106,28 +107,27 @@ public class FeignClientDelegation {
             response = fixedValue;
             return;
         }
+        // 如果threadLocal 没有，什么都不做
+        HttpMetricsData httpMetricsData = httpMetricsDataThreadLocal.get();
+        if (httpMetricsData == null) {
+            return;
+        }
+        final Long now = System.currentTimeMillis();
+        httpMetricsData.setMetricTime(now);
+        httpMetricsData.setRespTime(now);
+        if (t != null) {
+            httpMetricsData.setHttpStatus("ERR");
+            httpMetricsData.setResponseBody(t.getMessage());
+            MetricsEvent<HttpMetricsData> event = new MetricsEvent<HttpMetricsData>();
+            event.setEventData(httpMetricsData);
+            EventReporterHolder.getEventReporter().asyncReport(event);
+            return;
+        }
         try {
             Class<?> resClz = response.getClass();
-            // 如果threadLocal 没有，什么都不做
-            HttpMetricsData httpMetricsData = httpMetricsDataThreadLocal.get();
-            if (httpMetricsData == null) {
-                return;
-            }
             // 获取请求头
             Map<String, Collection<String>> headers = ReflectMethods.invokeMethod(resClz, MethodNames.HEADERS_METHOD,
                     response);
-            final Long now = System.currentTimeMillis();
-            httpMetricsData.setMetricTime(now);
-            httpMetricsData.setRespTime(now);
-            // 调用直接报错
-            // if (throwable != null) {
-            // httpMetricsData.setHttpStatus("ERR");
-            // httpMetricsData.setResponseBody(throwable.getMessage());
-            // MetricsEvent<HttpMetricsData> event = new MetricsEvent<HttpMetricsData>();
-            // event.setEventData(httpMetricsData);
-            // EventReporterHolder.getEventReporter().asyncReport(event);
-            // return;
-            // }
             final int httpStatus = ReflectMethods.invokeMethod(resClz, MethodNames.FEIGN_STATUS_METHOD, response);
             httpMetricsData.setHttpStatus(httpStatus + "");
             // 构造新的 response

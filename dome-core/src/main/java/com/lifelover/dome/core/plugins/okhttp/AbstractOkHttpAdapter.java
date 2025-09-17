@@ -106,9 +106,11 @@ public abstract class AbstractOkHttpAdapter implements OkhttpAdapter {
         if (httpMetricsData == null) {
             return null;
         }
+        final long now = System.currentTimeMillis();
+        httpMetricsData.setMetricTime(now);
+        httpMetricsData.setRespTime(now);
         if (throwable != null) {
             httpMetricsData.setHttpStatus("ERR");
-            httpMetricsData.setRespTime(System.currentTimeMillis());
             httpMetricsData.setResponseBody(throwable.getMessage());
             MetricsEvent<HttpMetricsData> event = new MetricsEvent<HttpMetricsData>();
             event.setEventData(httpMetricsData);
@@ -117,10 +119,6 @@ public abstract class AbstractOkHttpAdapter implements OkhttpAdapter {
         }
         try {
             Object newResponse = fullFillHttpMetricsData(httpMetricsData, response);
-            // 填充两个时间
-            final long now = System.currentTimeMillis();
-            httpMetricsData.setRespTime(now);
-            httpMetricsData.setMetricTime(now);
             MetricsEvent<HttpMetricsData> event = new MetricsEvent<HttpMetricsData>();
             event.setEventData(httpMetricsData);
             EventReporterHolder.getEventReporter().asyncReport(event);

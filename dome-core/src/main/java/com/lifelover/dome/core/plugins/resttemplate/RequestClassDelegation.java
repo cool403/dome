@@ -103,7 +103,9 @@ public class RequestClassDelegation {
     }
 
     @Advice.OnMethodExit(onThrowable = Throwable.class)
-    public static void onMethodExit(@Advice.This Object call,
+    public static void onMethodExit(
+            @Advice.Thrown Throwable t,
+            @Advice.This Object call,
             @Advice.Enter Object fixedValue,
             @Advice.Return(readOnly = false, typing = Assigner.Typing.DYNAMIC) Object response,
             @Advice.Argument(value = 0, typing = Assigner.Typing.DYNAMIC) Object httpHeaders,
@@ -113,22 +115,22 @@ public class RequestClassDelegation {
             response = fixedValue;
             return;
         }
+        HttpMetricsData httpMetricsData = httpMetricsDataThreadLocal.get();
+        if (httpMetricsData == null) {
+            return;
+        }
+        final long now = System.currentTimeMillis();
+        httpMetricsData.setMetricTime(now);
+        httpMetricsData.setRespTime(now);
+        if (t != null) {
+            httpMetricsData.setHttpStatus("ERR");
+            httpMetricsData.setResponseBody(t.getMessage());
+            MetricsEvent<HttpMetricsData> event = new MetricsEvent<HttpMetricsData>();
+            event.setEventData(httpMetricsData);
+            EventReporterHolder.getEventReporter().asyncReport(event);
+            return;
+        }
         try {
-            HttpMetricsData httpMetricsData = httpMetricsDataThreadLocal.get();
-            if (httpMetricsData == null) {
-                return;
-            }
-            final long now = System.currentTimeMillis();
-            httpMetricsData.setMetricTime(now);
-            httpMetricsData.setRespTime(now);
-            if (throwable != null) {
-                httpMetricsData.setHttpStatus("ERR");
-                httpMetricsData.setResponseBody(throwable.getMessage());
-                MetricsEvent<HttpMetricsData> event = new MetricsEvent<HttpMetricsData>();
-                event.setEventData(httpMetricsData);
-                EventReporterHolder.getEventReporter().asyncReport(event);
-                return;
-            }
             // 获取响应状态码
             Class<?> responseClz = response.getClass();
             int httpStatus = ReflectMethods.invokeMethod(responseClz, MethodNames.GET_RAW_STATUS_METHOD, response);
