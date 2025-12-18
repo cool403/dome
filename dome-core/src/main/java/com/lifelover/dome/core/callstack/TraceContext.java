@@ -41,7 +41,9 @@ public class TraceContext {
         if (!stack.isEmpty() || stack.peek() == node) {
             stack.pop();
             node.setEndTime(System.currentTimeMillis());
+            //stack为空,代表tracing结束打印可视化日志
             if (stack.isEmpty()) {
+                processTraceResult(ROOT_NODE.get());
                 ROOT_NODE.remove();
                 TRACE_STACK.remove();
                 TRACING_ACTIVE.remove();
@@ -75,6 +77,15 @@ public class TraceContext {
         final StringBuilder sb = new StringBuilder();
         for (int i = 0; i < depth; i++) {
             sb.append("  ");
+        }
+        sb.append("└─ ").append(node.getMethodSignature());
+        sb.append("（耗时: ").append(node.getDuration()).append("ms）");
+        if (node.getException() != null) {
+            sb.append(" [异常: ").append(node.getException().getClass().getSimpleName()).append("]");
+        }
+        log.info(sb.toString());
+        for(TraceNode item: node.getChildren()){
+            printTraceTree(item, depth + 1);
         }
     }
 }
