@@ -11,7 +11,7 @@ import net.bytebuddy.implementation.bind.annotation.RuntimeType;
 import net.bytebuddy.implementation.bind.annotation.SuperCall;
 
 public class TraceInterceptor {
-    private static final List<String> IGNORE_METHODS = new ArrayList<>();
+    public static final List<String> IGNORE_METHODS = new ArrayList<>();
 
     static {
         IGNORE_METHODS.add("equals");
