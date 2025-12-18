@@ -27,6 +27,7 @@ public class MethodCallStackBbPlugin extends AbstractBbPlugin {
                     protected Builder<?> build(Builder<?> builder, TypeDescription typeDescription,
                             ClassLoader classLoader,
                             JavaModule module) {
+                        System.out.println("Instrumenting class: " + typeDescription.getName());
                         return builder.method(getMethodMatcher())
                                 .intercept(MethodDelegation.to(TraceInterceptor.class));
                     }
@@ -53,6 +54,9 @@ public class MethodCallStackBbPlugin extends AbstractBbPlugin {
                 .and(ElementMatchers.not(ElementMatchers.isSetter()))
                 .and(ElementMatchers.not(ElementMatchers.isConstructor()))
                 .and(ElementMatchers.not(ElementMatchers.isStatic()))
+                .and(ElementMatchers.not(ElementMatchers.isBridge()))
+                .and(ElementMatchers.not(ElementMatchers.isSynthetic()))
+                .and(ElementMatchers.not(ElementMatchers.isAbstract()))
                 .and(ElementMatchers.not(ElementMatchers.isClone()));
     }
 }
