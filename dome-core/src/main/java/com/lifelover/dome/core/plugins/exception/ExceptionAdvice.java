@@ -28,7 +28,6 @@ public class ExceptionAdvice {
         if (context == null) {
             return;
         }
-        System.out.println("222222222222222222222222222");
         ExceptionEvent event = new ExceptionEvent(
                 context.getMethodName(),
                 context.getArguments(),

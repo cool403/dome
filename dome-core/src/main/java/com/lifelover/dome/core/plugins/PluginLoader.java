@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.lifelover.dome.core.callstack.MethodCallStackBbPlugin;
 import com.lifelover.dome.core.plugins.exception.ExceptionBbPlugin;
 import com.lifelover.dome.core.plugins.feign.FeignPlugin;
 import com.lifelover.dome.core.plugins.http.DispatcherServletBbPlugin;
@@ -34,7 +35,9 @@ public class PluginLoader {
             pluginLst.add(new ResttemplateBbPlugin());
             
             // 添加异常监控插件
-            pluginLst.add(new ExceptionBbPlugin());
+            // pluginLst.add(new ExceptionBbPlugin());
+            //添加CallStack采集插件
+            pluginLst.add(new MethodCallStackBbPlugin());
         }
     }
 
