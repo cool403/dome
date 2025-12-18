@@ -24,10 +24,6 @@ public class TraceInterceptor {
         IGNORE_METHODS.add("finalize");
     }
 
-    public static boolean isIgnoredMethod(String methodName) {
-        return IGNORE_METHODS.contains(methodName);
-    }
-
     @RuntimeType
     public static Object intercept(@Origin Method method, @AllArguments Object[] args,
             @SuperCall Callable<?> callable) throws Exception {
@@ -42,7 +38,7 @@ public class TraceInterceptor {
             return callable.call();
         }
         // 忽略常见的方法
-        if (isIgnoredMethod(methodName)) {
+        if (IGNORE_METHODS.contains(methodName)) {
             return callable.call();
         }
         // 启动方法，默认是controller接口

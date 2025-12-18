@@ -52,6 +52,9 @@ public class MethodCallStackBbPlugin extends AbstractBbPlugin {
         return ElementMatchers.not(ElementMatchers.isGetter())
                 .and(ElementMatchers.not(ElementMatchers.isSetter()))
                 .and(ElementMatchers.not(ElementMatchers.isConstructor()))
+                .and(ElementMatchers.not(ElementMatchers.isStatic()))
+                //@PostMapping也不能interceptor
+                .and(ElementMatchers.isAnnotatedWith(ElementMatchers.nameContains("PostMapping")))
                 .and(ElementMatchers.not(ElementMatchers.isClone()));
     }
 }
