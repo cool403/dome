@@ -36,6 +36,7 @@ public class MethodCallStackBbPlugin extends AbstractBbPlugin {
 
     public static ElementMatcher<? super TypeDescription> getTypeMatcher() {
         return ElementMatchers.not(ElementMatchers.nameContainsIgnoreCase("$$FastClassBySpringCGLIB$$"))
+        .and(ElementMatchers.not(ElementMatchers.nameContainsIgnoreCase("$$EnhancerBySpringCGLIB$$")))
         .and(ElementMatchers.nameMatches("com.lifelover.dome.*"))
         .and(ElementMatchers.not(ElementMatchers.nameEndsWithIgnoreCase("VO")))
         .and(ElementMatchers.not(ElementMatchers.nameEndsWithIgnoreCase("PO")))
