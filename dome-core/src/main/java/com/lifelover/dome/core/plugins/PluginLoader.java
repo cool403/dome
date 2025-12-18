@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.lifelover.dome.core.callstack.MethodCallStackBbPlugin;
-import com.lifelover.dome.core.plugins.exception.ExceptionBbPlugin;
 import com.lifelover.dome.core.plugins.feign.FeignPlugin;
 import com.lifelover.dome.core.plugins.http.DispatcherServletBbPlugin;
 import com.lifelover.dome.core.plugins.okhttp.OkhttpBbPlugin;
