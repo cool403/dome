@@ -33,14 +33,14 @@ public class TraceInterceptor {
             @SuperCall Callable<?> callable) throws Exception {
         final String className = method.getDeclaringClass().getName();
         final String methodName = method.getName();
-        // // 忽略get方法,不带参数
-        // if (args.length == 0 && methodName.startsWith("get")) {
-        //     return callable.call();
-        // }
-        // // 忽略set方法,带一个参数
-        // if (args.length == 1 && methodName.startsWith("set")) {
-        //     return callable.call();
-        // }
+        // 忽略get方法,不带参数
+        if (args.length == 0 && methodName.startsWith("get")) {
+            return callable.call();
+        }
+        // 忽略set方法,带一个参数
+        if (args.length == 1 && methodName.startsWith("set")) {
+            return callable.call();
+        }
         // 忽略常见的方法
         if (isIgnoredMethod(methodName)) {
             return callable.call();
