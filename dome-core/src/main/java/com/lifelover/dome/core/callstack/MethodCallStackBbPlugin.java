@@ -35,22 +35,23 @@ public class MethodCallStackBbPlugin extends AbstractBbPlugin {
     }
 
     public static ElementMatcher<? super TypeDescription> getTypeMatcher() {
-        return ElementMatchers.not(ElementMatchers.nameContainsIgnoreCase("$$FastClassBySpringCGLIB$$"))
-        .and(ElementMatchers.not(ElementMatchers.nameContainsIgnoreCase("$$EnhancerBySpringCGLIB$$")))
-        .and(ElementMatchers.not(ElementMatchers.nameMatches("com.lifelover.dome.*")))
-        .and(ElementMatchers.nameStartsWith("com.example"))
-        .and(ElementMatchers.not(ElementMatchers.nameEndsWithIgnoreCase("VO")))
-        .and(ElementMatchers.not(ElementMatchers.nameEndsWithIgnoreCase("PO")))
-        .and(ElementMatchers.not(ElementMatchers.nameEndsWithIgnoreCase("DTO")))
-        .and(ElementMatchers.not(ElementMatchers.nameEndsWithIgnoreCase("BO")))
-        .and(ElementMatchers.not(ElementMatchers.nameContainsIgnoreCase(".pojo.")))
-        .and(ElementMatchers.not(ElementMatchers.nameContainsIgnoreCase(".valueobject.")))
-        .and(ElementMatchers.not(ElementMatchers.nameEndsWith("Builder")));
+        return ElementMatchers.nameStartsWith("com.example")
+                .and(ElementMatchers.not(ElementMatchers.nameContainsIgnoreCase("$$FastClassBySpringCGLIB$$")))
+                .and(ElementMatchers.not(ElementMatchers.nameContainsIgnoreCase("$$EnhancerBySpringCGLIB$$")))
+                .and(ElementMatchers.not(ElementMatchers.nameMatches("com.lifelover.dome.*")))
+                .and(ElementMatchers.not(ElementMatchers.nameEndsWithIgnoreCase("VO")))
+                .and(ElementMatchers.not(ElementMatchers.nameEndsWithIgnoreCase("PO")))
+                .and(ElementMatchers.not(ElementMatchers.nameEndsWithIgnoreCase("DTO")))
+                .and(ElementMatchers.not(ElementMatchers.nameEndsWithIgnoreCase("BO")))
+                .and(ElementMatchers.not(ElementMatchers.nameContainsIgnoreCase(".pojo.")))
+                .and(ElementMatchers.not(ElementMatchers.nameContainsIgnoreCase(".valueobject.")))
+                .and(ElementMatchers.not(ElementMatchers.nameEndsWith("Builder")));
     }
 
     public static ElementMatcher<? super MethodDescription> getMethodMatcher() {
         return ElementMatchers.not(ElementMatchers.isGetter())
-        .and(ElementMatchers.not(ElementMatchers.isSetter()))
-        .and(ElementMatchers.not(ElementMatchers.isClone()));
+                .and(ElementMatchers.not(ElementMatchers.isSetter()))
+                .and(ElementMatchers.not(ElementMatchers.isConstructor()))
+                .and(ElementMatchers.not(ElementMatchers.isClone()));
     }
 }
