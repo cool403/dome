@@ -50,7 +50,8 @@ public class MethodCallStackBbPlugin extends AbstractBbPlugin {
     }
 
     public static ElementMatcher<? super MethodDescription> getMethodMatcher() {
-        return ElementMatchers.not(ElementMatchers.isGetter())
+        return ElementMatchers.not(ElementMatchers.isDeclaredBy(Object.class))
+                .and(ElementMatchers.not(ElementMatchers.isGetter()))
                 .and(ElementMatchers.not(ElementMatchers.isSetter()))
                 .and(ElementMatchers.not(ElementMatchers.isConstructor()))
                 .and(ElementMatchers.not(ElementMatchers.isStatic()))
